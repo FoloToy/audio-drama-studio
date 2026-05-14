@@ -123,7 +123,7 @@ function AddVoiceForm({ onAdded, onCancel }) {
     }
   }
 
-  const inputCls = "w-full text-xs bg-th-deep border border-th-lo text-th-md placeholder:text-th-xlo rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#E5007F]/40 focus:border-[#E5007F]/30 transition-all"
+  const inputCls = "w-full text-xs bg-th-surface border border-th-md text-th-hi placeholder:text-th-xlo rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#E5007F]/40 focus:border-[#E5007F]/30 transition-all theme-transition"
 
   return (
     <form onSubmit={handleSubmit} className="border border-[#E5007F]/20 bg-[#E5007F]/[0.04] rounded-xl p-4 space-y-3">

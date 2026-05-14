@@ -24,7 +24,7 @@ from flask_cors import CORS
 from dotenv import set_key
 
 from config import OUTPUT_DIR
-from services.claude_service  import rewrite_script, generate_media_prompts, build_rewrite_prompt, _extract_json
+from services.claude_service  import rewrite_script, generate_media_prompts, build_rewrite_prompt, _extract_json, client as claude_client
 from services.doubao_tts      import generate_episode_tts
 from services.elevenlabs_sfx  import generate_all_sfx
 from services.suno_bgm        import generate_all_bgm
@@ -224,6 +224,47 @@ def api_progress(task_id: str):
 @app.route("/api/health")
 def api_health():
     return jsonify({"status": "ok"})
+
+
+# ─────────────────────────────────────────────
+# AI 自动识别故事名称 / 集数名称
+# ─────────────────────────────────────────────
+
+@app.route("/api/suggest-names", methods=["POST"])
+def api_suggest_names():
+    import re
+    data     = request.get_json(silent=True) or {}
+    raw_text = data.get("raw_text", "").strip()
+    if not raw_text:
+        return jsonify({"error": "raw_text 不能为空"}), 400
+
+    try:
+        msg = claude_client.messages.create(
+            model="claude-3-5-haiku-20241022",
+            max_tokens=200,
+            messages=[{
+                "role": "user",
+                "content": (
+                    "请根据下面的故事文本，识别出故事名称和集数名称。\n"
+                    "集数名称必须严格使用格式：第X集：副标题，例如「第一集：桃园三结义」「第3集：官渡之战」。\n"
+                    "如果文本中没有明确的集数信息，则根据内容推断一个合适的副标题，集数写第一集。\n"
+                    "以 JSON 格式返回：{\"story_name\": \"三国演义\", \"episode_name\": \"第一集：桃园三结义\"}\n"
+                    "只返回 JSON，不要其他任何内容。\n\n"
+                    f"故事文本（前500字）：\n{raw_text[:500]}"
+                ),
+            }],
+        )
+        text = msg.content[0].text.strip()
+        m    = re.search(r'\{.*?\}', text, re.DOTALL)
+        if not m:
+            return jsonify({"error": "AI 返回格式异常：" + text[:100]}), 500
+        result = json.loads(m.group())
+        return jsonify({
+            "story_name":   result.get("story_name", ""),
+            "episode_name": result.get("episode_name", ""),
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # ─────────────────────────────────────────────

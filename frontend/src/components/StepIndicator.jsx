@@ -1,37 +1,78 @@
-﻿const STEPS = ['输入原著', '确认剧本', '配置音色', '生成BGM/音效', '生成音频']
+const STEPS = ['输入原著', '确认剧本', '配置音色', 'BGM · 音效', '生成音频']
 
 export default function StepIndicator({ current }) {
   return (
-    <div className="flex items-center mb-8 theme-transition">
+    <div className="flex items-center">
       {STEPS.map((label, i) => {
         const step   = i + 1
         const done   = step < current
         const active = step === current
+        const isLast = i === STEPS.length - 1
+
         return (
-          <div key={step} className="flex items-center flex-1 last:flex-none">
-            <div className="flex flex-col items-center shrink-0">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300
-                ${done
-                  ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25'
-                  : active
-                    ? 'bg-[#E5007F] text-white ring-4 ring-[#E5007F]/20 shadow-lg shadow-[#E5007F]/30 animate-bounce-dot'
-                    : 'bg-th-surface text-th-lo border border-th-md'
-                }`}>
-                {done ? (
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                ) : step}
-              </div>
-              <span className={`mt-1.5 text-[11px] whitespace-nowrap font-medium tracking-wide transition-colors duration-300
-                ${done ? 'text-emerald-500' : active ? 'text-[#FF3BA8]' : 'text-th-xlo'}`}>
-                {label}
-              </span>
+          <div key={step} className={`flex items-center gap-2 ${isLast ? '' : 'flex-1'}`}>
+
+            {/* ── 步骤主体 ── */}
+            <div className="flex items-center gap-1.5 shrink-0">
+
+              {/* 状态图标 */}
+              {active ? (
+                /* 亮点 + 光晕 */
+                <span className="relative flex shrink-0" style={{ width: 10, height: 10 }}>
+                  <span className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping"
+                        style={{ background: '#E5007F' }} />
+                  <span className="relative rounded-full"
+                        style={{ width: 10, height: 10, background: '#E5007F',
+                                 boxShadow: '0 0 10px rgba(229,0,127,0.75)' }} />
+                </span>
+              ) : done ? (
+                /* 对勾 */
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                     stroke="rgb(34,197,94)" strokeWidth={2.8}
+                     strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+              ) : (
+                /* 淡点 */
+                <span className="rounded-full bg-th-xlo shrink-0 theme-transition"
+                      style={{ width: 5, height: 5, opacity: 0.45 }} />
+              )}
+
+              {/* 标签文字 */}
+              {active ? (
+                <span className="font-semibold transition-all duration-300 whitespace-nowrap"
+                      style={{
+                        fontSize: 16,
+                        background: 'linear-gradient(125deg,#FF70BF,#E5007F)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}>
+                  {label}
+                </span>
+              ) : done ? (
+                <span className="text-th-lo transition-all duration-300 whitespace-nowrap theme-transition"
+                      style={{ fontSize: 15 }}>
+                  {label}
+                </span>
+              ) : (
+                <span className="text-th-xlo transition-all duration-300 whitespace-nowrap theme-transition"
+                      style={{ fontSize: 15, opacity: 0.6 }}>
+                  {label}
+                </span>
+              )}
             </div>
-            {i < STEPS.length - 1 && (
-              <div className={`flex-1 h-px mx-2 mb-4 transition-all duration-500
-                ${done ? 'bg-emerald-500/40' : 'bg-th-surface'}`} />
+
+            {/* ── 连接线 ── */}
+            {!isLast && (
+              <div className="flex-1 theme-transition" style={{
+                height: 1,
+                background: done
+                  ? 'linear-gradient(to right, rgba(34,197,94,0.35), rgba(34,197,94,0.15))'
+                  : 'var(--border-lo)',
+              }} />
             )}
+
           </div>
         )
       })}

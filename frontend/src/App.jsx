@@ -1,4 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
+
+// 始终使用浅色模式，清除可能残留的深色模式 class
+document.documentElement.classList.remove('dark')
+localStorage.removeItem('folotoy-theme')
 import StepIndicator    from './components/StepIndicator'
 import ScriptViewer     from './components/ScriptViewer'
 import CharacterCard    from './components/CharacterCard'
@@ -8,6 +12,7 @@ import StyleEditorModal from './components/StyleEditorModal'
 import RewriteProgress  from './components/RewriteProgress'
 import LibraryModal     from './components/LibraryModal'
 import VoicePickerModal from './components/VoicePickerModal'
+import CloudCanvas      from './components/CloudCanvas'
 import { useSSE }       from './hooks/useSSE'
 
 // ─── 风格配置 ────────────────────────────────────────────────────────────────
@@ -42,17 +47,43 @@ const STYLES = [
 // ─── Step 1: 输入原著 ───────────────────────────────────────────────────────
 
 function InputPage({ onNext }) {
-  const [storyName,     setStoryName]     = useState('三国演义')
-  const [episodeName,   setEpisodeName]   = useState('第一集：桃园三结义')
+  const [storyName,     setStoryName]     = useState('')
+  const [episodeName,   setEpisodeName]   = useState('')
   const [rawText,       setRawText]       = useState('')
   const [style,         setStyle]         = useState('sunjingxiu')
   const [customPrompt,  setCustomPrompt]  = useState('')
   const [streaming,     setStreaming]     = useState(false)
   const [error,         setError]         = useState('')
   const [editingStyle,  setEditingStyle]  = useState(null)
+  const [autoFilling,   setAutoFilling]   = useState(false)
+
+  const handleAutoFill = async () => {
+    if (!rawText.trim() || autoFilling) return
+    setAutoFilling(true)
+    setError('')
+    try {
+      const res  = await fetch('/api/suggest-names', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ raw_text: rawText }),
+      })
+      const d = await res.json()
+      if (d.error) throw new Error(d.error)
+      if (d.story_name)   setStoryName(d.story_name)
+      if (d.episode_name) setEpisodeName(d.episode_name)
+    } catch (e) {
+      setError('AI 识别失败：' + e.message)
+    } finally {
+      setAutoFilling(false)
+    }
+  }
+
+  const canSubmit = storyName.trim() && episodeName.trim() && rawText.trim()
 
   const handleSubmit = () => {
-    if (!rawText.trim()) return setError('请粘贴原著文本')
+    if (!storyName.trim())   return setError('请填写故事名称')
+    if (!episodeName.trim()) return setError('请填写集数名称')
+    if (!rawText.trim())     return setError('请输入故事内容')
     if (style === 'custom' && !customPrompt.trim()) return setError('请填写自定义风格指令')
     setError('')
     setStreaming(true)
@@ -79,38 +110,68 @@ function InputPage({ onNext }) {
     )
   }
 
-  const inputCls = "w-full bg-th-surface border border-th-lo text-th-hi placeholder:text-th-xlo rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#E5007F]/50 focus:border-[#E5007F]/40 transition-all theme-transition"
+  const inputCls = "w-full bg-th-surface border border-th-md text-th-hi placeholder:text-th-xlo rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#E5007F]/50 focus:border-[#E5007F]/40 transition-all theme-transition"
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-[11px] font-semibold text-th-lo uppercase tracking-widest mb-2">故事名称</label>
-          <input className={inputCls} value={storyName} onChange={e => setStoryName(e.target.value)} placeholder="如：三国演义" />
+    <div className="flex-1 min-h-0 flex flex-col gap-5">
+
+      {/* 故事名称 + 集数名称 */}
+      <div className="shrink-0 space-y-2">
+        <div className="grid grid-cols-2 gap-5">
+          <div>
+            <label className="block text-xs font-semibold text-th-lo uppercase tracking-widest mb-2.5">故事名称</label>
+            <input className={inputCls} value={storyName} onChange={e => setStoryName(e.target.value)} placeholder="如：三国演义" />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-th-lo uppercase tracking-widest mb-2.5">集数名称</label>
+            <input className={inputCls} value={episodeName} onChange={e => setEpisodeName(e.target.value)} placeholder="如：第一集：桃园三结义" />
+          </div>
         </div>
-        <div>
-          <label className="block text-[11px] font-semibold text-th-lo uppercase tracking-widest mb-2">集数名称</label>
-          <input className={inputCls} value={episodeName} onChange={e => setEpisodeName(e.target.value)} placeholder="如：第一集：桃园三结义" />
+        {/* AI 自动识别按钮 */}
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={handleAutoFill}
+            disabled={!rawText.trim() || autoFilling}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all btn-press disabled:opacity-30"
+            style={{
+              background: 'rgba(229,0,127,0.07)',
+              border:     '1px solid rgba(229,0,127,0.20)',
+              color:      'rgba(229,0,127,0.85)',
+            }}
+          >
+            {autoFilling ? (
+              <span className="w-3 h-3 border-2 rounded-full animate-spin"
+                    style={{ borderColor: 'rgba(229,0,127,0.25)', borderTopColor: 'rgba(229,0,127,0.85)' }} />
+            ) : (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L9.19 8.63L2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61z"/>
+              </svg>
+            )}
+            {autoFilling ? 'AI 识别中…' : 'AI 识别故事名称和集数'}
+          </button>
         </div>
       </div>
 
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <label className="block text-[11px] font-semibold text-th-lo uppercase tracking-widest">原著文本</label>
-          <span className="text-[11px] text-th-xlo">{rawText.length} 字</span>
+      {/* textarea：自适应填充剩余高度 */}
+      <div className="flex-1 min-h-0 flex flex-col">
+        <div className="flex items-center justify-end mb-2">
+          <span className="text-xs text-th-xlo">{rawText.length} 字</span>
         </div>
         <textarea
-          className={`${inputCls} h-52 resize-none leading-relaxed`}
+          className={`${inputCls} flex-1 min-h-[80px] resize-none leading-relaxed`}
           value={rawText}
           onChange={e => setRawText(e.target.value)}
-          placeholder="粘贴三国演义、西游记、水浒传等原著文本..."
+          placeholder="输入故事..."
         />
       </div>
 
+      {/* 风格选择 + 按钮：锁定在底部 */}
+      <div className="shrink-0 space-y-5">
       {/* 风格选择 */}
       <div>
-        <label className="block text-[11px] font-semibold text-th-lo uppercase tracking-widest mb-3">改写风格</label>
-        <div className="grid grid-cols-3 gap-2.5">
+        <label className="block text-xs font-semibold text-th-lo uppercase tracking-widest mb-3.5">改写风格</label>
+        <div className="grid grid-cols-3 gap-3">
           {STYLES.map(s => {
             const isSelected = style === s.id
             const canEdit    = isSelected && s.id !== 'custom'
@@ -119,12 +180,12 @@ function InputPage({ onNext }) {
                 <button
                   type="button"
                   onClick={() => setStyle(s.id)}
-                  className={`w-full text-left p-3.5 rounded-xl border transition-all card-hover
+                  className={`w-full text-left p-4 rounded-xl border transition-all card-hover
                     ${isSelected ? s.active : `border-th-lo bg-th-surface hover:bg-th-surface hover:border-th-md opacity-60 hover:opacity-100`}`}
                 >
-                  <div className="text-xl mb-2">{s.emoji}</div>
-                  <div className="text-xs font-semibold text-th-hi">{s.title}</div>
-                  <div className="text-[11px] text-th-lo mt-0.5 leading-tight">{s.desc}</div>
+                  <div className="text-2xl mb-2.5">{s.emoji}</div>
+                  <div className="text-sm font-semibold text-th-hi">{s.title}</div>
+                  <div className="text-xs text-th-lo mt-1 leading-snug">{s.desc}</div>
                 </button>
                 {canEdit && (
                   <button
@@ -171,11 +232,12 @@ function InputPage({ onNext }) {
 
       <button
         onClick={handleSubmit}
-        disabled={!rawText.trim()}
-        className="w-full bg-gradient-to-r from-[#E5007F] to-[#C4006B] hover:from-[#FF2E9F] hover:to-[#E5007F] disabled:from-th-surface disabled:to-th-surface disabled:text-th-xlo text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-[#E5007F]/20 disabled:shadow-none btn-press font-cute text-base"
+        disabled={!canSubmit}
+        className="w-full bg-gradient-to-r from-[#E5007F] to-[#C4006B] hover:from-[#FF2E9F] hover:to-[#E5007F] disabled:from-th-surface disabled:to-th-surface disabled:text-th-xlo text-white font-semibold py-4 rounded-xl transition-all shadow-lg shadow-[#E5007F]/20 disabled:shadow-none btn-press font-cute text-lg"
       >
         开始改写剧本 — {selectedStyle?.title}
       </button>
+      </div>{/* end shrink-0 bottom section */}
     </div>
   )
 }
@@ -193,41 +255,45 @@ function ReviewPage({ data, onNext, onBack }) {
   const sfxCount = script.filter(i => i.type === 'sfx').length
 
   return (
-    <div className="space-y-5">
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <h3 className="text-sm font-semibold text-th-hi">改写后的剧本</h3>
-            <p className="text-[11px] text-th-lo mt-0.5">{ttsCount} 条台词 · {bgmCount} 首 BGM · {sfxCount} 个音效 · 可直接点击台词修改</p>
-          </div>
-        </div>
-        <div className="border border-th-lo rounded-xl p-3 bg-th-surface theme-transition">
-          <ScriptViewer script={script} editable onChange={setScript} />
+    <div className="flex-1 min-h-0 flex flex-col gap-5">
+
+      {/* 标题行 */}
+      <div className="shrink-0 flex items-center justify-between">
+        <div>
+          <h3 className="text-base font-semibold text-th-hi">改写后的剧本</h3>
+          <p className="text-xs text-th-lo mt-1">{ttsCount} 条台词 · {bgmCount} 首 BGM · {sfxCount} 个音效 · 可直接点击台词修改</p>
         </div>
       </div>
 
-      <div>
-        <h3 className="text-[11px] font-semibold text-th-lo uppercase tracking-widest mb-3">
+      {/* 剧本区域：撑满剩余高度 */}
+      <div className="flex-1 min-h-0 border border-th-lo rounded-2xl p-4 bg-th-surface theme-transition overflow-hidden">
+        <ScriptViewer script={script} editable onChange={setScript} />
+      </div>
+
+      {/* 角色 */}
+      <div className="shrink-0">
+        <h3 className="text-xs font-semibold text-th-lo uppercase tracking-widest mb-3">
           识别到的角色 <span className="text-th-xlo font-normal normal-case">共 {characters.length} 个</span>
         </h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2.5">
           {characters.map(c => (
             <span key={c.name}
-              className="px-3 py-1 rounded-full text-xs border border-th-md bg-th-surface text-th-md theme-transition">
+              className="px-4 py-1.5 rounded-full text-sm border border-th-md bg-th-surface text-th-md theme-transition">
               {c.name}
-              <span className="text-th-lo ml-1">{c.lines_count}条</span>
+              <span className="text-th-lo ml-1.5">{c.lines_count}条</span>
             </span>
           ))}
         </div>
       </div>
 
-      <div className="flex gap-3 pt-1">
+      {/* 操作按钮 */}
+      <div className="shrink-0 flex gap-4">
         <button onClick={onBack}
-          className="flex-1 border border-th-md text-th-md hover:text-th-hi hover:bg-th-surface font-medium py-2.5 rounded-xl transition-colors">
+          className="flex-1 border border-th-md text-th-md hover:text-th-hi hover:bg-th-surface font-medium py-3.5 rounded-xl transition-colors text-sm">
           ← 重新改写
         </button>
         <button onClick={() => onNext({ ...data, script })}
-          className="flex-2 flex-grow bg-gradient-to-r from-[#E5007F] to-[#C4006B] hover:from-[#FF2E9F] hover:to-[#E5007F] text-white font-semibold py-2.5 rounded-xl transition-all shadow-lg shadow-[#E5007F]/20 btn-press">
+          className="flex-2 flex-grow bg-gradient-to-r from-[#E5007F] to-[#C4006B] hover:from-[#FF2E9F] hover:to-[#E5007F] text-white font-semibold py-3.5 rounded-xl transition-all shadow-lg shadow-[#E5007F]/20 btn-press text-sm">
           确认，配置音色 →
         </button>
       </div>
@@ -439,8 +505,8 @@ function MediaCard({ name, item, onGenerate, onPromptChange }) {
       </div>
 
       <textarea
-        className="w-full text-[11px] border border-th-lo rounded-lg px-3 py-2 h-16 resize-none
-          bg-th-deep text-th-lo placeholder:text-th-xlo focus:outline-none focus:ring-1 focus:ring-[#E5007F]/30 leading-relaxed theme-transition"
+        className="w-full text-[11px] border border-th-md rounded-lg px-3 py-2 h-16 resize-none
+          bg-th-surface text-th-hi placeholder:text-th-xlo focus:outline-none focus:ring-1 focus:ring-[#E5007F]/30 leading-relaxed theme-transition"
         value={item.prompt}
         onChange={e => onPromptChange(name, e.target.value)}
         placeholder="英文提示词（可编辑后再生成）…"
@@ -612,18 +678,47 @@ function MediaPage({ data, onNext, onBack }) {
         </div>
       ) : (
         <>
+          {/* ── 顶部操作行 ── */}
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[11px] text-th-xlo leading-relaxed">
+                {bgm_list.length > 0 && `${bgm_list.length} 首 BGM`}
+                {bgm_list.length > 0 && sfx_list.length > 0 && ' · '}
+                {sfx_list.length > 0 && `${sfx_list.length} 个音效`}
+                {anyIdle && bgm_list.length > 0 && Object.values(bgmItems).some(i => i.status === 'idle' || i.status === 'error') && (
+                  <>　·　BGM 每首约 4–5 分钟</>
+                )}
+              </p>
+            </div>
+            {anyIdle && (
+              <button
+                onClick={generateAll}
+                disabled={anyGenerating}
+                className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all btn-press disabled:opacity-40"
+                style={{
+                  background: 'rgba(229,0,127,0.08)',
+                  border:     '1px solid rgba(229,0,127,0.22)',
+                  color:      'rgba(229,0,127,0.85)',
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M13 2L4.09 13H11L10 22L20.91 11H14L13 2Z" />
+                </svg>
+                一键生成全部
+              </button>
+            )}
+          </div>
+
+          {/* ── 生成中提示 ── */}
+          {anyGenerating && bgm_list.length > 0 && Object.values(bgmItems).some(i => i.status === 'generating') && (
+            <p className="text-[11px] text-amber-400/70 bg-amber-500/[0.06] border border-amber-500/12 px-3.5 py-2.5 rounded-xl leading-relaxed">
+              BGM 串行生成中，约 {bgm_list.length * 4}–{bgm_list.length * 5} 分钟，请勿刷新页面
+            </p>
+          )}
+
           {bgm_list.length > 0 && (
             <div className="space-y-2.5">
-              <div className="flex items-center gap-2.5">
-                <h3 className="text-[11px] font-semibold text-th-lo uppercase tracking-widest">BGM
-                  <span className="text-th-xlo font-normal normal-case ml-1.5">{bgm_list.length} 首</span>
-                </h3>
-                {Object.values(bgmItems).some(i => i.status === 'generating') && (
-                  <span className="text-[11px] text-amber-500 animate-pulse">
-                    生成中，约 {bgm_list.length * 4}–{bgm_list.length * 5} 分钟…
-                  </span>
-                )}
-              </div>
+              <h3 className="text-[11px] font-semibold text-th-lo uppercase tracking-widest">BGM</h3>
               {bgm_list.map(n => (
                 <MediaCard key={n} name={n} item={bgmItems[n] || { prompt: '', status: 'idle', previewUrl: null }}
                   onGenerate={(name, force) => genBgm(name, force)}
@@ -634,9 +729,7 @@ function MediaPage({ data, onNext, onBack }) {
 
           {sfx_list.length > 0 && (
             <div className="space-y-2.5">
-              <h3 className="text-[11px] font-semibold text-th-lo uppercase tracking-widest">音效
-                <span className="text-th-xlo font-normal normal-case ml-1.5">{sfx_list.length} 个</span>
-              </h3>
+              <h3 className="text-[11px] font-semibold text-th-lo uppercase tracking-widest">音效</h3>
               {sfx_list.map(n => (
                 <MediaCard key={n} name={n} item={sfxItems[n] || { prompt: '', status: 'idle', previewUrl: null }}
                   onGenerate={(name, force) => genSfx(name, force)}
@@ -645,22 +738,8 @@ function MediaPage({ data, onNext, onBack }) {
             </div>
           )}
 
-          {anyIdle && (
-            <div className="space-y-2">
-              {bgm_list.length > 0 && Object.values(bgmItems).some(i => i.status === 'idle' || i.status === 'error') && (
-                <p className="text-[11px] text-amber-400/80 bg-amber-500/[0.07] border border-amber-500/15 px-3.5 py-2.5 rounded-xl leading-relaxed">
-                  BGM 由 MiniMax music-2.6 生成，每首约 4–5 分钟，串行处理；音效由 ElevenLabs 生成，约 5 秒/个。库中已有素材不会重新生成，请勿刷新页面。
-                </p>
-              )}
-              <button onClick={generateAll}
-                className="w-full border border-dashed border-[#E5007F]/30 text-[#FF3BA8] hover:text-[#FF70BF] hover:bg-[#E5007F]/[0.05] font-semibold py-2.5 rounded-xl transition-all text-sm btn-press glow-pulse">
-                ⚡ 一键生成全部
-              </button>
-            </div>
-          )}
-
           {allDone && (
-            <p className="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 rounded-xl">
+            <p className="text-xs text-emerald-400/80 bg-emerald-500/[0.08] border border-emerald-500/18 px-4 py-3 rounded-xl">
               全部生成完毕，可以试听后进入下一步
             </p>
           )}
@@ -812,73 +891,31 @@ export default function App() {
   const [settingsOpen,  setSettingsOpen]  = useState(false)
   const [libraryOpen,   setLibraryOpen]   = useState(false)
 
-  // ── 主题切换 ──────────────────────────────────────────────
-  const [isDark, setIsDark] = useState(() => {
-    const saved = localStorage.getItem('folotoy-theme')
-    if (saved) return saved === 'dark'
-    return true   // 默认深色
-  })
-
-  useEffect(() => {
-    const html = document.documentElement
-    if (isDark) {
-      html.classList.add('dark')
-    } else {
-      html.classList.remove('dark')
-    }
-    localStorage.setItem('folotoy-theme', isDark ? 'dark' : 'light')
-  }, [isDark])
-
-  const toggleTheme = () => setIsDark(v => !v)
-  // ──────────────────────────────────────────────────────────
-
   const goTo = (s, extra = {}) => {
     setStepData(prev => ({ ...prev, ...extra }))
     setStep(s)
   }
 
   return (
-    <div className="min-h-screen bg-th-page theme-transition">
-      <div className="max-w-[720px] mx-auto px-5 py-8">
+    <div className="h-screen overflow-hidden" style={{ background: 'var(--bg-page)' }}>
+
+      {/* ── 全屏云朵背景 ── */}
+      <CloudCanvas className="fixed inset-0 w-full h-full" style={{ zIndex: 0 }} />
+      <div className="fixed inset-0 pointer-events-none" style={{
+        zIndex: 1,
+        background: 'rgba(252,246,250,0.82)',
+      }} />
+
+      <div className="relative h-full flex flex-col max-w-[980px] mx-auto px-8 py-6" style={{ zIndex: 2 }}>
         {/* Header */}
-        <header className="flex items-center justify-between mb-8">
+        <header className="shrink-0 flex items-center justify-between mb-6 px-2 py-2">
           <div className="flex items-center gap-3">
-            {/* FoloToy 官方 Logo —— 白色圆角药丸 */}
             <div className="h-9 bg-white rounded-2xl px-3 flex items-center shadow-lg shrink-0"
                  style={{ boxShadow: '0 4px 20px rgba(229,0,127,0.22)' }}>
               <img src="/folotoy-logo.png" alt="FoloToy" className="h-5 w-auto" />
             </div>
-            <div>
-              <h1 className="text-sm font-bold tracking-tight leading-tight gradient-text font-cute">故事工坊</h1>
-              <p className="text-th-lo text-[11px] mt-0.5">欢迎来到 FoloToy 的故事世界 ✨</p>
-            </div>
           </div>
           <div className="flex items-center gap-1">
-
-            {/* ── 主题切换按钮 ── */}
-            <button
-              onClick={toggleTheme}
-              title={isDark ? '切换到浅色模式' : '切换到深色模式'}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-th-lo hover:text-th-md border border-transparent hover:border-th-lo hover:bg-th-surface transition-all relative overflow-hidden"
-            >
-              {/* 太阳（浅色模式图标） */}
-              <svg
-                className={`w-4 h-4 absolute transition-all duration-300 ${isDark ? 'opacity-0 scale-50 rotate-90' : 'opacity-100 scale-100 rotate-0 animate-sun-spin'}`}
-                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round"
-                  d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-              </svg>
-              {/* 月亮（深色模式图标） */}
-              <svg
-                className={`w-4 h-4 absolute transition-all duration-300 ${isDark ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 -rotate-90'}`}
-                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round"
-                  d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-              </svg>
-            </button>
-
             <button onClick={() => setLibraryOpen(true)} title="素材库"
               className="w-8 h-8 rounded-lg flex items-center justify-center text-th-lo hover:text-th-md hover:bg-th-surface border border-transparent hover:border-th-lo transition-all">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -895,55 +932,53 @@ export default function App() {
           </div>
         </header>
 
-        <StepIndicator current={step} />
+        <div className="shrink-0 px-2 py-2 mb-4">
+          <StepIndicator current={step} />
+        </div>
 
         {/* ── FoloToy 英雄区：仅第 1 步展示 ── */}
         {step === 1 && (
-          <div className="relative rounded-2xl overflow-hidden mb-5 border border-white/[0.08] shadow-2xl shadow-black/50 animate-fade-in"
-               style={{ height: '180px' }}>
-            {/* 暖色渐变兜底（图片未加载时依然好看） */}
-            <div className="absolute inset-0"
-                 style={{ background: 'linear-gradient(135deg, #1a0e2e 0%, #2d1a0e 40%, #1a1505 100%)' }} />
-            {/* 背景图 */}
-            <img
-              src="/folotoy-hero.jpg"
-              alt="FoloToy 故事世界"
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{ objectPosition: 'center 35%' }}
-              onError={e => { e.currentTarget.style.display = 'none' }}
-            />
-            {/* 多层渐变遮罩：左侧深，右侧透明；底部深 */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0D0D12]/88 via-[#0D0D12]/50 to-[#0D0D12]/10" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D12]/75 via-transparent to-transparent" />
+          <div className="relative shrink-0 mb-4 py-6 animate-fade-in">
 
-            {/* 右侧装饰光晕 */}
-            <div className="absolute -bottom-8 -right-8 w-56 h-56 rounded-full pointer-events-none"
-                 style={{ background: 'radial-gradient(circle, rgba(251,191,36,0.12) 0%, transparent 70%)' }} />
-            <div className="absolute top-4 right-16 w-24 h-24 rounded-full pointer-events-none"
-                 style={{ background: 'radial-gradient(circle, rgba(167,139,250,0.10) 0%, transparent 70%)' }} />
+            {/* 品牌粉色光晕 */}
+            <div className="absolute pointer-events-none" style={{
+              left: '-5%', top: '0%', width: '55%', height: '100%',
+              background: 'radial-gradient(ellipse at 35% 55%, rgba(229,0,127,0.11) 0%, transparent 65%)',
+              filter: 'blur(28px)',
+            }} />
 
-            {/* 文字层 */}
-            <div className="absolute inset-0 flex flex-col justify-end p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-amber-300
-                  bg-amber-500/15 border border-amber-500/25 px-2.5 py-0.5 rounded-full tracking-wide">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                  FoloToy 出品
-                </span>
-              </div>
-              <h2 className="text-[22px] font-bold text-white font-cute leading-snug"
-                  style={{ textShadow: '0 2px 16px rgba(0,0,0,0.6)' }}>
-                把任何故事，变成孩子的声音世界
+            {/* 内容 */}
+            <div className="relative">
+
+              {/* 主标题 */}
+              <h2 className="font-cute" style={{
+                fontSize: 'clamp(28px, 4.2vw, 46px)',
+                lineHeight: 1.25,
+                fontWeight: 500,
+                color: '#18060F',
+              }}>
+                把任何故事，<br />
+                <span style={{
+                  background: 'linear-gradient(125deg, #FF8EC8 0%, #E5007F 55%, #C4006B 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}>变成孩子的声音世界</span>
               </h2>
-              <p className="text-[11px] mt-1.5 leading-relaxed"
-                 style={{ color: 'rgba(255,255,255,0.38)' }}>
-                粘贴原著文本 → AI 改写剧本 → 自动合成角色配音 + BGM + 音效
-              </p>
+
             </div>
           </div>
         )}
 
-        <div className="bg-th-card rounded-2xl border border-th-lo p-6 shadow-2xl shadow-black/20 animate-fade-in-up theme-transition">
+        <div
+          className="flex-1 min-h-0 flex flex-col rounded-2xl animate-fade-in-up overflow-y-auto"
+          style={{
+            background: 'var(--bg-card)',
+            border:     '1px solid var(--border-lo)',
+            boxShadow:  '0 8px 40px rgba(229,0,127,0.06)',
+          }}
+        >
+          <div className="flex-1 min-h-0 flex flex-col p-8">
           {step === 1 && (
             <InputPage onNext={d => goTo(2, d)} />
           )}
@@ -971,6 +1006,7 @@ export default function App() {
           {step === 5 && (
             <ProductionPage data={stepData} onBack={() => setStep(4)} />
           )}
+          </div>
         </div>
       </div>
 

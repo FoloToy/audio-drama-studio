@@ -1,9 +1,24 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
+
+/* ── 固定乳白色配色，不跟随深色主题 ── */
+const C = {
+  bg:          '#FEFCFD',          /* 主体背景：乳白 */
+  surface:     '#F5EFF2',          /* 卡片 / 标签背景 */
+  surfaceHov:  '#EDE4E9',          /* 悬停深一档 */
+  border:      'rgba(0,0,0,0.09)', /* 分割线 */
+  borderItem:  'rgba(0,0,0,0.11)', /* 素材卡片边框 */
+  borderHov:   'rgba(229,0,127,0.35)',
+  textHi:      '#18060F',
+  textMd:      '#4B2535',
+  textLo:      '#7C526A',
+  textXlo:     '#A07888',
+}
 
 function EmptyState({ type }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-th-xlo">
-      <div className="w-14 h-14 rounded-2xl bg-th-surface border border-th-lo flex items-center justify-center mb-3">
+    <div className="flex flex-col items-center justify-center py-16" style={{ color: C.textXlo }}>
+      <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3"
+           style={{ background: C.surface, border: `1px solid ${C.border}` }}>
         {type === 'bgm' ? (
           <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round"
@@ -16,10 +31,10 @@ function EmptyState({ type }) {
           </svg>
         )}
       </div>
-      <p className="text-sm font-medium text-th-lo">
+      <p className="text-sm font-medium" style={{ color: C.textLo }}>
         {type === 'bgm' ? 'BGM 库为空' : '音效库为空'}
       </p>
-      <p className="text-xs text-th-xlo mt-1">
+      <p className="text-xs mt-1" style={{ color: C.textXlo }}>
         生成后会自动存入素材库，下次可以直接复用
       </p>
     </div>
@@ -29,6 +44,7 @@ function EmptyState({ type }) {
 function AssetItem({ name, entry, type, onDelete }) {
   const [playing,    setPlaying]    = useState(false)
   const [confirming, setConfirming] = useState(false)
+  const [hovered,    setHovered]    = useState(false)
   const [audio] = useState(() => new Audio(`/api/preview/${type}/${encodeURIComponent(name)}`))
 
   useEffect(() => {
@@ -44,11 +60,8 @@ function AssetItem({ name, entry, type, onDelete }) {
   }, [confirming])
 
   const toggle = () => {
-    if (playing) {
-      audio.pause(); audio.currentTime = 0; setPlaying(false)
-    } else {
-      audio.play().catch(() => {}); setPlaying(true)
-    }
+    if (playing) { audio.pause(); audio.currentTime = 0; setPlaying(false) }
+    else         { audio.play().catch(() => {}); setPlaying(true) }
   }
 
   const handleDeleteClick = (e) => {
@@ -57,15 +70,23 @@ function AssetItem({ name, entry, type, onDelete }) {
   }
 
   return (
-    <div className="flex items-start gap-3 p-3 rounded-xl border border-th-lo bg-th-surface hover:border-white/[0.1] hover:bg-[#1E1E30] transition-all group">
+    <div
+      className="flex items-start gap-3 p-3 rounded-xl transition-all group"
+      style={{
+        background:   hovered ? C.surfaceHov : C.surface,
+        border:       `1px solid ${hovered ? C.borderHov : C.borderItem}`,
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       {/* Play button */}
       <button
         onClick={toggle}
-        className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all btn-press
-          ${playing
-            ? 'bg-[#E5007F] text-white shadow-lg shadow-[#E5007F]/30'
-            : 'bg-th-surface text-th-md border border-th-md hover:border-[#E5007F]/40 hover:text-[#FF3BA8]'
-          }`}
+        className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all btn-press"
+        style={playing
+          ? { background: '#E5007F', color: '#fff', boxShadow: '0 4px 14px rgba(229,0,127,0.35)' }
+          : { background: '#fff', color: C.textMd, border: `1px solid ${C.borderItem}` }
+        }
       >
         {playing ? (
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -81,15 +102,15 @@ function AssetItem({ name, entry, type, onDelete }) {
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-th-hi truncate">{name}</span>
+          <span className="text-sm font-semibold truncate" style={{ color: C.textHi }}>{name}</span>
           {entry.added && entry.added !== 'unknown' && (
-            <span className="text-[10px] text-th-xlo shrink-0">{entry.added.slice(0, 10)}</span>
+            <span className="text-[10px] shrink-0" style={{ color: C.textXlo }}>{entry.added.slice(0, 10)}</span>
           )}
         </div>
         {entry.prompt ? (
-          <p className="text-xs text-th-lo mt-0.5 line-clamp-2 leading-relaxed">{entry.prompt}</p>
+          <p className="text-xs mt-0.5 line-clamp-2 leading-relaxed" style={{ color: C.textLo }}>{entry.prompt}</p>
         ) : (
-          <p className="text-xs text-th-xlo mt-0.5 italic">无描述</p>
+          <p className="text-xs mt-0.5 italic" style={{ color: C.textXlo }}>无描述</p>
         )}
       </div>
 
@@ -108,9 +129,9 @@ function AssetItem({ name, entry, type, onDelete }) {
       ) : (
         <button
           onClick={handleDeleteClick}
-          className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center
-            text-th-xlo hover:text-rose-400 hover:bg-rose-500/10 transition-all
-            opacity-0 group-hover:opacity-100"
+          className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all
+            opacity-0 group-hover:opacity-100 hover:bg-rose-50 hover:text-rose-500"
+          style={{ color: C.textXlo }}
           title="从库中移除"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -155,17 +176,25 @@ export default function LibraryModal({ onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center animate-fade-in"
+      style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-th-card border border-th-md rounded-2xl shadow-2xl shadow-black/60 w-full max-w-lg mx-4 flex flex-col theme-transition animate-slide-up-modal"
-           style={{ maxHeight: '80vh' }}>
-
+      <div
+        className="w-full max-w-lg mx-4 flex flex-col rounded-2xl animate-slide-up-modal"
+        style={{
+          maxHeight:  '80vh',
+          background: C.bg,
+          border:     `1px solid ${C.border}`,
+          boxShadow:  '0 24px 60px rgba(0,0,0,0.28), 0 4px 16px rgba(229,0,127,0.08)',
+        }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-th-lo shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 shrink-0"
+             style={{ borderBottom: `1px solid ${C.border}` }}>
           <div>
-            <h2 className="text-sm font-bold text-th-hi font-cute">本地素材库</h2>
-            <p className="text-[11px] text-th-xlo mt-0.5">
+            <h2 className="text-sm font-bold font-cute" style={{ color: C.textHi }}>本地素材库</h2>
+            <p className="text-[11px] mt-0.5" style={{ color: C.textXlo }}>
               BGM {library.bgm_count} 首 · 音效 {library.sfx_count} 个
             </p>
           </div>
@@ -174,8 +203,8 @@ export default function LibraryModal({ onClose }) {
               onClick={handleSync}
               disabled={syncing}
               title="同步磁盘文件到库"
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-th-xlo
-                hover:text-th-md hover:bg-th-surface transition-all disabled:opacity-30"
+              className="w-7 h-7 rounded-lg flex items-center justify-center transition-all disabled:opacity-30 hover:bg-black/[0.06]"
+              style={{ color: C.textLo }}
             >
               <svg className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round"
@@ -184,8 +213,8 @@ export default function LibraryModal({ onClose }) {
             </button>
             <button
               onClick={onClose}
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-th-xlo
-                hover:text-th-md hover:bg-th-surface transition-all"
+              className="w-7 h-7 rounded-lg flex items-center justify-center transition-all hover:bg-black/[0.06]"
+              style={{ color: C.textLo }}
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -203,11 +232,11 @@ export default function LibraryModal({ onClose }) {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium transition-all btn-press
-                ${tab === t.id
-                  ? 'bg-[#E5007F]/10 text-[#FF3BA8] border border-[#E5007F]/20'
-                  : 'text-th-lo hover:text-th-md hover:bg-th-surface border border-transparent'
-                }`}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium transition-all btn-press"
+              style={tab === t.id
+                ? { background: 'rgba(229,0,127,0.10)', color: '#E5007F', border: '1px solid rgba(229,0,127,0.22)' }
+                : { background: 'transparent', color: C.textLo, border: '1px solid transparent' }
+              }
             >
               {t.id === 'bgm' ? (
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -221,8 +250,13 @@ export default function LibraryModal({ onClose }) {
                 </svg>
               )}
               {t.label}
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-normal
-                ${tab === t.id ? 'bg-[#E5007F]/15 text-[#FF3BA8]' : 'bg-white/[0.06] text-th-xlo'}`}>
+              <span
+                className="text-[10px] px-1.5 py-0.5 rounded-full font-normal"
+                style={tab === t.id
+                  ? { background: 'rgba(229,0,127,0.14)', color: '#E5007F' }
+                  : { background: 'rgba(0,0,0,0.07)', color: C.textXlo }
+                }
+              >
                 {t.count}
               </span>
             </button>
@@ -251,8 +285,8 @@ export default function LibraryModal({ onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-th-lo shrink-0">
-          <p className="text-[11px] text-th-xlo text-center">
+        <div className="px-6 py-3 shrink-0" style={{ borderTop: `1px solid ${C.border}` }}>
+          <p className="text-[11px] text-center" style={{ color: C.textXlo }}>
             新生成的素材会自动入库 · 下次生成时 AI 会优先复用库中的素材
           </p>
         </div>

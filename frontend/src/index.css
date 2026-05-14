@@ -8,22 +8,22 @@
 ══════════════════════════════════════════════════════════════ */
 :root {
   /* 背景层次 */
-  --bg-page:    #FFF5F9;   /* 最外层页面 */
-  --bg-card:    #FFFFFF;   /* 卡片 / 弹窗 */
-  --bg-surface: #FDF0F5;   /* 输入框 / 内嵌区域 */
-  --bg-deep:    #F8E8F1;   /* 更深内嵌 */
-  --bg-float:   #FCF0F6;   /* 悬浮面板 */
+  --bg-page:    #FFF5F9;   /* 最外层页面：暖粉白 */
+  --bg-card:    #FFFFFF;   /* 卡片 / 弹窗：纯白 */
+  --bg-surface: #F5F5F7;   /* 输入框 / 内嵌：中性浅灰，与白卡片明显区分 */
+  --bg-deep:    #EBEBED;   /* 更深内嵌 */
+  --bg-float:   #F9F0F5;   /* 悬浮面板 */
 
   /* 文字层次 */
-  --text-hi:  #1A0A10;   /* 主要文字 */
-  --text-md:  #5C3A4A;   /* 次要文字 */
-  --text-lo:  #9A7080;   /* 提示 / 标签 */
-  --text-xlo: #C0A0B0;   /* 极淡 / 占位 */
+  --text-hi:  #18060F;   /* 主要文字：深咖黑 */
+  --text-md:  #4B2535;   /* 次要文字 */
+  --text-lo:  #7C526A;   /* 提示 / 标签 */
+  --text-xlo: #A07888;   /* 极淡 / 占位 */
 
-  /* 边框 */
-  --border-lo: rgba(229,0,127,0.10);   /* 淡边框 */
-  --border-md: rgba(229,0,127,0.18);   /* 中边框 */
-  --border-hi: rgba(229,0,127,0.30);   /* 强边框 */
+  /* 边框 —— 浅色模式用黑色半透明（行业标准，可读性最佳） */
+  --border-lo: rgba(0,0,0,0.09);    /* 淡分割线 */
+  --border-md: rgba(0,0,0,0.15);   /* 输入框 / 卡片边框 */
+  --border-hi: rgba(229,0,127,0.40); /* 聚焦 / 激活态 */
 
   /* 杂项 */
   --overlay:    rgba(0,0,0,0.45);
@@ -39,13 +39,13 @@
   --bg-float:   #16161F;
 
   --text-hi:  #F1F0F4;
-  --text-md:  #8A9AB4;
-  --text-lo:  #5A6478;
-  --text-xlo: #3A4050;
+  --text-md:  #9AABC6;
+  --text-lo:  #6A7A96;
+  --text-xlo: #505E78;
 
-  --border-lo: rgba(255,255,255,0.06);
-  --border-md: rgba(255,255,255,0.09);
-  --border-hi: rgba(255,255,255,0.14);
+  --border-lo: rgba(255,255,255,0.08);
+  --border-md: rgba(255,255,255,0.14);
+  --border-hi: rgba(255,255,255,0.22);
 
   --overlay:    rgba(0,0,0,0.65);
   --scrollbar:  rgba(229,0,127,0.18);
