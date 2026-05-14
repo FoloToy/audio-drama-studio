@@ -1,0 +1,206 @@
+{
+  "bgm": {
+    "热闹村店": {
+      "file": "热闹村店.mp3",
+      "prompt": "Romance of the Three Kingdoms, lively ancient Chinese village inn atmosphere, cheerful dizi flute and pipa interplay, upbeat rhythmic percussion, bustling and warm, no vocals no singing pure instrumental background music for children's audio drama, loop-friendly",
+      "added": "2026-05-13 17:16"
+    },
+    "桃园结义": {
+      "file": "桃园结义.mp3",
+      "prompt": "Romance of the Three Kingdoms, solemn and heroic oath-taking music in peach garden, deep guqin and resonant xiao flute, slow and emotional with swelling bronze bells, brotherhood and loyalty, no vocals no singing pure instrumental background music for children's audio drama, loop-friendly",
+      "added": "2026-05-13 17:16"
+    },
+    "test_direct": {
+      "file": "test_direct.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "timing_test2": {
+      "file": "timing_test2.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "古代市井热闹": {
+      "file": "古代市井热闹.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "古风酒馆": {
+      "file": "古风酒馆.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "奔赴张庄": {
+      "file": "奔赴张庄.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "开场市井": {
+      "file": "开场市井.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "开场旁白": {
+      "file": "开场旁白.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "桃园三结义": {
+      "file": "桃园三结义.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "热闹酒馆": {
+      "file": "热闹酒馆.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "开场叙事": {
+      "file": "开场叙事.mp3",
+      "prompt": "Romance of the Three Kingdoms, grand opening narrative music, dignified guqin and bamboo flute melody, slow and storytelling tempo, majestic but gentle for children, no vocals no singing pure instrumental background music for children's audio drama, loop-friendly",
+      "added": "2026-05-13 18:54"
+    },
+    "英雄初遇": {
+      "file": "英雄初遇.mp3",
+      "prompt": "Romance of the Three Kingdoms, heroic first encounter theme, uplifting erhu and resonant war drums, steady marching rhythm, proud and emotional, no vocals no singing pure instrumental background music for children's audio drama, loop-friendly",
+      "added": "2026-05-13 18:54"
+    },
+    "温馨酒馆": {
+      "file": "温馨酒馆.mp3",
+      "prompt": "Romance of the Three Kingdoms, cozy tavern scene, soft pipa and warm dizi flute, relaxed and cheerful lilt, welcoming and intimate atmosphere, no vocals no singing pure instrumental background music for children's audio drama, loop-friendly",
+      "added": "2026-05-13 18:54"
+    },
+    "阴谋暗涌": {
+      "file": "阴谋暗涌.mp3",
+      "prompt": "Romance of the Three Kingdoms, dark and suspenseful ancient Chinese court music, low erhu strings and subtle pipa plucking, slow tense rhythm with uneasy undertones, mysterious and brooding, no vocals no singing no lyrics pure instrumental background music for children's audio drama, loop-friendly",
+      "added": "2026-05-13 20:31"
+    },
+    "温情收尾": {
+      "file": "温情收尾.mp3",
+      "prompt": "Romance of the Three Kingdoms, warm and heartfelt ancient Chinese closing music, gentle guqin and soft bamboo flute melody, slow peaceful tempo, brotherly bond and emotional warmth, no vocals no singing no lyrics pure instrumental background music for children's audio drama, loop-friendly",
+      "added": "2026-05-13 20:31"
+    }
+  },
+  "sfx": {
+    "推车停下": {
+      "file": "推车停下.mp3",
+      "prompt": "Wooden cart wheels creaking to a halt on a dusty ancient Chinese road, heavy load settling with a thud, brief and realistic, sounds of wooden axles and stone-paved street ambient",
+      "added": "2026-05-13 17:25"
+    },
+    "推车声": {
+      "file": "推车声.mp3",
+      "prompt": "Wooden cart wheels rolling slowly over a dusty ancient Chinese road, creaking axles and soft rumbling friction, rhythmic and steady, rustic village atmosphere",
+      "added": "2026-05-13 16:59"
+    },
+    "斟酒声": {
+      "file": "斟酒声.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "风吹桃花沙沙": {
+      "file": "风吹桃花沙沙.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "鸟鸣花香": {
+      "file": "鸟鸣花香.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "酒碗放桌": {
+      "file": "酒碗放桌.mp3",
+      "prompt": "Ceramic wine bowl placed firmly on a wooden table, faint liquid swish inside, soft clink of pottery on wood, cozy tavern interior",
+      "added": "2026-05-13 16:53"
+    },
+    "马蹄声响": {
+      "file": "马蹄声响.mp3",
+      "prompt": "Horse hooves clattering rhythmically on packed earth road, multiple horses at a steady gait, distant and approaching, ancient rural landscape",
+      "added": "2026-05-13 16:53"
+    },
+    "推车停靠": {
+      "file": "推车停靠.mp3",
+      "prompt": "Wooden cart wheels creaking to a halt on a dusty ancient Chinese road, slight thud as it settles, subtle rustle of cargo, outdoor market ambience",
+      "added": "2026-05-13 16:53"
+    },
+    "风吹桃花": {
+      "file": "风吹桃花.mp3",
+      "prompt": "Gentle breeze rustling through peach blossoms, soft fluttering petals brushing against branches, delicate and airy, spring pastoral scene",
+      "added": "2026-05-13 16:53"
+    },
+    "花瓣飘落声": {
+      "file": "花瓣飘落声.mp3",
+      "prompt": "Delicate fluttering of cherry blossom petals landing on soft earth, gentle rustling and faint airy movement, serene and fleeting, classical garden ambience",
+      "added": "2026-05-13 16:59"
+    },
+    "推车轮子声": {
+      "file": "推车轮子声.mp3",
+      "prompt": "Wooden cart wheels rolling on ancient Chinese village dirt path, creaking axle and rhythmic bumping over small stones, heavy load shifting, dry and textured sound, distant rural ambiance",
+      "added": "2026-05-13 17:16"
+    },
+    "拍桌子声": {
+      "file": "拍桌子声.mp3",
+      "prompt": "Loud palm slap on rough wooden table surface, sharp impact with a brief low resonance of wood, sudden and strong, inside a rustic inn or village hall, intense and decisive",
+      "added": "2026-05-13 17:16"
+    },
+    "爽朗大笑": {
+      "file": "爽朗大笑.mp3",
+      "prompt": "Hearty and warm laughter of a heroic man, deep and resonant, echoing slightly in an open courtyard, friendly and sincere, suitable for ancient Chinese brotherhood scene",
+      "added": "2026-05-13 17:25"
+    },
+    "拍大腿声": {
+      "file": "拍大腿声.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "拍案轻响": {
+      "file": "拍案轻响.mp3",
+      "prompt": "",
+      "added": "unknown"
+    },
+    "叹息": {
+      "file": "叹息.mp3",
+      "prompt": "A heavy, resigned sigh from an adult man, breathy and prolonged with a slight chesty rumble, echoed in a quiet ancient Chinese tavern room, subtle wooden creak in the background, conveying deep melancholy",
+      "added": "2026-05-13 18:54"
+    },
+    "大喝一声": {
+      "file": "大喝一声.mp3",
+      "prompt": "A sudden powerful commanding shout, deep and resonant, bursting with authority, briefly echoing off stone walls in an ancient Chinese alley, sharp attack and quick decay, startling and forceful",
+      "added": "2026-05-13 18:54"
+    },
+    "酒馆乱哄哄": {
+      "file": "酒馆乱哄哄.mp3",
+      "prompt": "Lively chaotic ambience of an ancient Chinese tavern, overlapping murmured conversations, clinking of ceramic wine cups and chopsticks, wooden stools scraping, warm indoor bustle with a distant street vendor call",
+      "added": "2026-05-13 18:54"
+    },
+    "孩童嬉笑": {
+      "file": "孩童嬉笑.mp3",
+      "prompt": "Cheerful laughter and playful chatter of young children, light and bright in tone, energetic and carefree, warm and lively ambient sound in a peaceful village setting",
+      "added": "2026-05-13 19:10"
+    },
+    "人群齐声呼喊": {
+      "file": "人群齐声呼喊.mp3",
+      "prompt": "Large crowd shouting in unison outdoors in ancient China, powerful synchronized chant rising and fading, deep resonant collective voice, strong and commanding, echoing across open courtyard",
+      "added": "2026-05-13 20:31"
+    },
+    "马蹄急奔": {
+      "file": "马蹄急奔.mp3",
+      "prompt": "Rapid galloping hooves on packed dirt road in ancient China, fast rhythmic pounding growing louder then fading, urgent and thunderous, multiple horses charging at full speed",
+      "added": "2026-05-13 20:31"
+    },
+    "宫门沉重打开": {
+      "file": "宫门沉重打开.mp3",
+      "prompt": "Massive heavy ancient Chinese palace gate slowly creaking open, deep groaning wood and metal hinges straining, low resonant rumble, slow and imposing, echoing in large stone courtyard",
+      "added": "2026-05-13 20:31"
+    },
+    "刀剑出鞘": {
+      "file": "刀剑出鞘.mp3",
+      "prompt": "Sharp metallic scrape of ancient Chinese blade drawn from scabbard, clean crisp sliding steel sound ending with a resonant ring, swift and precise, tense silence follows",
+      "added": "2026-05-13 20:31"
+    },
+    "铁链锁链声": {
+      "file": "铁链锁链声.mp3",
+      "prompt": "Heavy iron chains rattling and clinking in ancient Chinese setting, cold metallic links dragging and jangling, harsh and oppressive, rhythmic clanking with deep weight and tension",
+      "added": "2026-05-13 20:31"
+    }
+  }
+}

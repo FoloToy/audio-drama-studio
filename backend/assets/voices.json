@@ -1,0 +1,17 @@
+{
+  "zh_female_vv_uranus_bigtts": {
+    "name": "Vivi2.0",
+    "description": "语调平稳、咬字柔和、自带治愈安抚力的女声音色",
+    "preview_file": "zh_female_vv_uranus_bigtts.mp3"
+  },
+  "zh_male_zhubajie_uranus_bigtts": {
+    "name": "猪八戒2.0",
+    "description": "声线憨厚、语气诙谐，自带喜感的男声，完美还原动画角色的憨态",
+    "preview_file": "zh_male_zhubajie_uranus_bigtts.mp3"
+  },
+  "zh_male_silang_uranus_bigtts": {
+    "name": "四郎2.0",
+    "description": "声线低沉威严、气场拉满，自带帝王霸气的成熟男声",
+    "preview_file": "zh_male_silang_uranus_bigtts.mp3"
+  }
+}
