@@ -48,10 +48,10 @@ npm run dev
 
 ## 使用流程（5步）
 
-1. **输入原著** — 填写故事名称、集数名称，粘贴原著文本，选择改写风格
-2. **确认剧本** — 查看 AI 改写后的孙敬修风格剧本，可编辑台词/音效/BGM
+1. **输入原著** — 填写故事名称、集数名称（支持「AI 识别故事名称和集数」一键填写），粘贴原著文本，选择改写风格；三项全填后才可点击开始
+2. **确认剧本** — 查看 AI 改写后的剧本，可直接点击台词编辑内容、修改 BGM/音效名称
 3. **配置音色** — AI 自动从本地音色库匹配角色音色，可手动调整；支持添加新音色（含试听）
-4. **生成BGM/音效** — AI 生成英文提示词并查询本地素材库，有可复用的直接调用，其余调用 ElevenLabs（音效）和 MiniMax（BGM）生成
+4. **生成 BGM/音效** — 顶部「⚡ 一键生成全部」按钮优先显示；AI 生成英文提示词并查询本地素材库，库中已有的直接复用
 5. **生成音频** — 点击开始，实时查看 7 阶段进度，完成后下载 MP3
 
 ---
@@ -103,12 +103,17 @@ backend/
 
 ---
 
-## 重启后端（Windows）
+## 重启服务（Windows）
 
-**必须用 PowerShell 彻底杀进程**，否则旧进程残留会继续占用 5000 端口：
+**必须用 PowerShell 彻底杀进程**，否则旧进程残留会继续占用端口：
 
 ```powershell
-Get-Process python* -ErrorAction SilentlyContinue | Stop-Process -Force
-# 然后重启
-python -u main.py
+Stop-Process -Name python -Force -ErrorAction SilentlyContinue
+Stop-Process -Name node   -Force -ErrorAction SilentlyContinue
+# 重启后端
+Start-Process cmd -ArgumentList "/k cd /d D:\audio-drama-studio\backend && python main.py"
+# 重启前端
+Start-Process cmd -ArgumentList "/k cd /d D:\audio-drama-studio\frontend && npm run dev"
 ```
+
+访问地址：**http://localhost:5173/**
