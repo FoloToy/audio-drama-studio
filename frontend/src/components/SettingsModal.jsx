@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 
-// section: 分组标题（可选）；否则为普通字段
 const FIELDS = [
   { section: '🤖 AI 脚本生成' },
   {
@@ -71,7 +70,7 @@ const FIELDS = [
   },
   {
     key:         'ELEVENLABS_API_KEY',
-    label:       'ElevenLabs API Key（音效备用）',
+    label:       'ElevenLabs API Key（音效）',
     placeholder: 'elevenlabs.io → Settings → API Key',
     sensitive:   true,
     hint:        'MiniMax Key 为空时使用。elevenlabs.io → Profile → API Keys',
@@ -94,11 +93,9 @@ export default function SettingsModal({ onClose }) {
   }, [])
 
   const handleSave = async () => {
-    setSaving(true)
-    setError('')
-    setSaved(false)
+    setSaving(true); setError(''); setSaved(false)
     try {
-      const res = await fetch('/api/settings', {
+      const res  = await fetch('/api/settings', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(values),
@@ -114,42 +111,42 @@ export default function SettingsModal({ onClose }) {
     }
   }
 
-  const toggleVisible = (key) =>
-    setVisible(prev => ({ ...prev, [key]: !prev[key] }))
+  const toggleVisible = key => setVisible(prev => ({ ...prev, [key]: !prev[key] }))
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in"
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+      <div className="bg-[#13131A] border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/60 w-full max-w-lg mx-4 overflow-hidden animate-slide-up-modal">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
           <div>
-            <h2 className="text-base font-semibold text-gray-800">API 设置</h2>
-            <p className="text-xs text-gray-400 mt-0.5">配置保存到本地 .env 文件，立即生效无需重启</p>
+            <h2 className="text-sm font-bold text-slate-100 font-cute">API 设置</h2>
+            <p className="text-[11px] text-slate-600 mt-0.5">配置保存到本地 .env 文件，立即生效无需重启</p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-300 hover:bg-white/[0.06] transition-all"
           >
-            ✕
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
 
         {/* Body */}
         <div className="px-6 py-5 space-y-4 max-h-[60vh] overflow-y-auto">
           {loading ? (
-            <div className="flex justify-center py-8">
-              <span className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+            <div className="flex justify-center py-10">
+              <div className="w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : (
             FIELDS.map((field, idx) => {
-              // 分组标题
               if (field.section) {
                 return (
-                  <div key={`section-${idx}`} className={`${idx > 0 ? 'pt-2' : ''}`}>
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide pb-1 border-b border-gray-100">
+                  <div key={`section-${idx}`} className={idx > 0 ? 'pt-3' : ''}>
+                    <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest pb-2 border-b border-white/[0.06]">
                       {field.section}
                     </p>
                   </div>
@@ -157,31 +154,37 @@ export default function SettingsModal({ onClose }) {
               }
               const { key, label, placeholder, sensitive, hint } = field
               return (
-                <div key={key}>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {label}
-                  </label>
+                <div key={key} className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-400">{label}</label>
                   <div className="relative">
                     <input
                       type={sensitive && !visible[key] ? 'password' : 'text'}
                       value={values[key] ?? ''}
                       onChange={e => setValues(prev => ({ ...prev, [key]: e.target.value }))}
                       placeholder={placeholder}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm
-                        focus:outline-none focus:ring-2 focus:ring-indigo-300 font-mono"
+                      className="w-full bg-[#1A1A28] border border-white/[0.07] text-slate-300 placeholder:text-slate-700 rounded-xl px-3.5 py-2.5 pr-10 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-violet-500/50 focus:border-violet-500/40 transition-all"
                     />
                     {sensitive && (
                       <button
                         type="button"
                         onClick={() => toggleVisible(key)}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors text-xs"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-400 transition-colors text-sm"
                         title={visible[key] ? '隐藏' : '显示'}
                       >
-                        {visible[key] ? '🙈' : '👁️'}
+                        {visible[key] ? (
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                          </svg>
+                        ) : (
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                        )}
                       </button>
                     )}
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">{hint}</p>
+                  {hint && <p className="text-[11px] text-slate-600 leading-relaxed">{hint}</p>}
                 </div>
               )
             })
@@ -189,28 +192,21 @@ export default function SettingsModal({ onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-100 flex items-center gap-3">
-          {error && (
-            <p className="text-xs text-red-500 flex-1">{error}</p>
-          )}
-          {saved && !error && (
-            <p className="text-xs text-green-600 flex-1">✓ 设置已保存并立即生效</p>
-          )}
+        <div className="px-6 py-4 border-t border-white/[0.06] flex items-center gap-3">
+          {error  && <p className="text-xs text-rose-400 flex-1">{error}</p>}
+          {saved  && !error && <p className="text-xs text-emerald-400 flex-1">已保存并立即生效</p>}
           {!error && !saved && <span className="flex-1" />}
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-          >
+          <button onClick={onClose}
+            className="px-4 py-2 text-xs text-slate-400 border border-white/[0.08] rounded-xl hover:bg-white/[0.04] hover:text-slate-200 transition-all btn-press">
             关闭
           </button>
           <button
             onClick={handleSave}
             disabled={saving || loading}
-            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700
-              disabled:bg-gray-200 disabled:text-gray-400 rounded-lg transition-colors flex items-center gap-2"
+            className="px-5 py-2 text-xs font-semibold text-white bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 disabled:from-white/[0.06] disabled:to-white/[0.06] disabled:text-slate-700 rounded-xl transition-all shadow-lg shadow-violet-500/20 disabled:shadow-none btn-press flex items-center gap-2"
           >
-            {saving && <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
-            {saving ? '保存中...' : '保存设置'}
+            {saving && <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
+            {saving ? '保存中…' : '保存设置'}
           </button>
         </div>
       </div>
