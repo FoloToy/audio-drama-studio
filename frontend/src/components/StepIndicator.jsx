@@ -1,8 +1,8 @@
-const STEPS = ['输入原著', '确认剧本', '配置音色', '生成BGM/音效', '生成音频']
+﻿const STEPS = ['输入原著', '确认剧本', '配置音色', '生成BGM/音效', '生成音频']
 
 export default function StepIndicator({ current }) {
   return (
-    <div className="flex items-center mb-8">
+    <div className="flex items-center mb-8 theme-transition">
       {STEPS.map((label, i) => {
         const step   = i + 1
         const done   = step < current
@@ -14,8 +14,8 @@ export default function StepIndicator({ current }) {
                 ${done
                   ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25'
                   : active
-                    ? 'bg-violet-600 text-white ring-4 ring-violet-600/20 shadow-lg shadow-violet-500/30 animate-bounce-dot'
-                    : 'bg-white/[0.05] text-slate-600 border border-white/[0.08]'
+                    ? 'bg-[#E5007F] text-white ring-4 ring-[#E5007F]/20 shadow-lg shadow-[#E5007F]/30 animate-bounce-dot'
+                    : 'bg-th-surface text-th-lo border border-th-md'
                 }`}>
                 {done ? (
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -24,13 +24,13 @@ export default function StepIndicator({ current }) {
                 ) : step}
               </div>
               <span className={`mt-1.5 text-[11px] whitespace-nowrap font-medium tracking-wide transition-colors duration-300
-                ${done ? 'text-emerald-500' : active ? 'text-violet-400' : 'text-slate-700'}`}>
+                ${done ? 'text-emerald-500' : active ? 'text-[#FF3BA8]' : 'text-th-xlo'}`}>
                 {label}
               </span>
             </div>
             {i < STEPS.length - 1 && (
               <div className={`flex-1 h-px mx-2 mb-4 transition-all duration-500
-                ${done ? 'bg-emerald-500/40' : 'bg-white/[0.06]'}`} />
+                ${done ? 'bg-emerald-500/40' : 'bg-th-surface'}`} />
             )}
           </div>
         )

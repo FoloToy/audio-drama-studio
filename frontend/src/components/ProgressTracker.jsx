@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+﻿import { useMemo } from 'react'
 
 const STAGES = [
   { key: 'prompt',      icon: '🤖', label: '生成提示词',     service: 'DeepSeek / Claude' },
@@ -15,12 +15,12 @@ function ProgressBar({ cur, total, done = false }) {
   return (
     <div className="mt-2 space-y-0.5">
       <div className="flex justify-between text-[11px]">
-        <span className={done ? 'text-emerald-500' : 'text-violet-400'}>{cur} / {total}</span>
-        <span className={done ? 'text-emerald-500' : 'text-violet-400'}>{pct}%</span>
+        <span className={done ? 'text-emerald-500' : 'text-[#FF3BA8]'}>{cur} / {total}</span>
+        <span className={done ? 'text-emerald-500' : 'text-[#FF3BA8]'}>{pct}%</span>
       </div>
       <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all duration-300 ${done ? 'bg-emerald-500' : 'bg-violet-500'}`}
+          className={`h-full rounded-full transition-all duration-300 ${done ? 'bg-emerald-500' : 'bg-[#E5007F]'}`}
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -33,11 +33,11 @@ function ItemRow({ name, status }) {
   const isErr = status === 'error'
   return (
     <div className="text-[11px] flex gap-1.5 items-center min-w-0">
-      <span className={`shrink-0 font-bold ${isOk ? 'text-emerald-400' : isErr ? 'text-rose-400' : 'text-violet-400'}`}>
+      <span className={`shrink-0 font-bold ${isOk ? 'text-emerald-400' : isErr ? 'text-rose-400' : 'text-[#FF3BA8]'}`}>
         {isOk ? '✓' : isErr ? '✗' : '…'}
       </span>
-      <span className="text-slate-500 truncate">{name}</span>
-      {status === 'skipped' && <span className="text-slate-600 shrink-0 ml-auto">已缓存</span>}
+      <span className="text-th-lo truncate">{name}</span>
+      {status === 'skipped' && <span className="text-th-xlo shrink-0 ml-auto">已缓存</span>}
     </div>
   )
 }
@@ -69,7 +69,7 @@ export default function ProgressTracker({ events, downloadUrl }) {
   }, [events])
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 theme-transition">
       {STAGES.map(({ key, icon, label, service }) => {
         const status  = st.status[key]
         const items   = st.items[key]   || []
@@ -89,32 +89,32 @@ export default function ProgressTracker({ events, downloadUrl }) {
           <div
             key={key}
             className={`rounded-xl border px-4 py-3 transition-all
-              ${isPending ? 'border-white/[0.04] bg-white/[0.01] opacity-35' :
-                isActive  ? 'border-violet-500/25 bg-violet-500/[0.06]' :
+              ${isPending ? 'border-th-lo bg-th-surface opacity-35' :
+                isActive  ? 'border-[#E5007F]/25 bg-[#E5007F]/[0.06]' :
                 isDone    ? 'border-emerald-500/20 bg-emerald-500/[0.05]' :
                 isError   ? 'border-rose-500/20 bg-rose-500/[0.06]' :
-                            'border-white/[0.06] bg-white/[0.02]'}`}
+                            'border-th-lo bg-th-surface'}`}
           >
             {/* Title row */}
             <div className="flex items-center gap-2">
               {isActive ? (
-                <span className="inline-block w-3.5 h-3.5 border-2 border-violet-400 border-t-transparent
+                <span className="inline-block w-3.5 h-3.5 border-2 border-[#FF3BA8] border-t-transparent
                   rounded-full animate-spin shrink-0" />
               ) : (
                 <span className="text-sm shrink-0">{icon}</span>
               )}
 
               <span className={`font-medium text-xs flex-1
-                ${isPending ? 'text-slate-700' :
-                  isActive  ? 'text-violet-300' :
+                ${isPending ? 'text-th-xlo' :
+                  isActive  ? 'text-[#FF70BF]' :
                   isDone    ? 'text-emerald-400' :
                   isError   ? 'text-rose-400' :
-                              'text-slate-400'}`}>
+                              'text-th-md'}`}>
                 {label}
               </span>
 
               {service && (
-                <span className="text-[11px] text-slate-700 shrink-0 hidden sm:inline">{service}</span>
+                <span className="text-[11px] text-th-xlo shrink-0 hidden sm:inline">{service}</span>
               )}
 
               {isDone && prog && (
@@ -135,7 +135,7 @@ export default function ProgressTracker({ events, downloadUrl }) {
             {isDone && prog && prog.total > 1 && <ProgressBar cur={prog.cur} total={prog.total} done />}
 
             {isActive && msg && !prog && (
-              <p className="text-[11px] text-violet-400/80 mt-1 leading-relaxed">{msg}</p>
+              <p className="text-[11px] text-[#FF3BA8]/80 mt-1 leading-relaxed">{msg}</p>
             )}
             {isDone && msg && (
               <p className="text-[11px] text-emerald-500/70 mt-1 leading-relaxed">{msg}</p>
@@ -150,7 +150,7 @@ export default function ProgressTracker({ events, downloadUrl }) {
                   <ItemRow key={i} name={d.name} status={d.status} />
                 ))}
                 {items.length > 8 && (
-                  <p className="text-[11px] text-slate-600 mt-0.5">…共 {items.length} 项</p>
+                  <p className="text-[11px] text-th-xlo mt-0.5">…共 {items.length} 项</p>
                 )}
               </div>
             )}

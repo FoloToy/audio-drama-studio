@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 
 function EmptyState({ type }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-slate-600">
-      <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mb-3">
+    <div className="flex flex-col items-center justify-center py-16 text-th-xlo">
+      <div className="w-14 h-14 rounded-2xl bg-th-surface border border-th-lo flex items-center justify-center mb-3">
         {type === 'bgm' ? (
           <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round"
@@ -16,10 +16,10 @@ function EmptyState({ type }) {
           </svg>
         )}
       </div>
-      <p className="text-sm font-medium text-slate-500">
+      <p className="text-sm font-medium text-th-lo">
         {type === 'bgm' ? 'BGM 库为空' : '音效库为空'}
       </p>
-      <p className="text-xs text-slate-600 mt-1">
+      <p className="text-xs text-th-xlo mt-1">
         生成后会自动存入素材库，下次可以直接复用
       </p>
     </div>
@@ -57,14 +57,14 @@ function AssetItem({ name, entry, type, onDelete }) {
   }
 
   return (
-    <div className="flex items-start gap-3 p-3 rounded-xl border border-white/[0.06] bg-[#1A1A28] hover:border-white/[0.1] hover:bg-[#1E1E30] transition-all group">
+    <div className="flex items-start gap-3 p-3 rounded-xl border border-th-lo bg-th-surface hover:border-white/[0.1] hover:bg-[#1E1E30] transition-all group">
       {/* Play button */}
       <button
         onClick={toggle}
         className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all btn-press
           ${playing
-            ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/30'
-            : 'bg-white/[0.05] text-slate-400 border border-white/[0.08] hover:border-violet-500/40 hover:text-violet-400'
+            ? 'bg-[#E5007F] text-white shadow-lg shadow-[#E5007F]/30'
+            : 'bg-th-surface text-th-md border border-th-md hover:border-[#E5007F]/40 hover:text-[#FF3BA8]'
           }`}
       >
         {playing ? (
@@ -81,15 +81,15 @@ function AssetItem({ name, entry, type, onDelete }) {
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-slate-200 truncate">{name}</span>
+          <span className="text-sm font-medium text-th-hi truncate">{name}</span>
           {entry.added && entry.added !== 'unknown' && (
-            <span className="text-[10px] text-slate-600 shrink-0">{entry.added.slice(0, 10)}</span>
+            <span className="text-[10px] text-th-xlo shrink-0">{entry.added.slice(0, 10)}</span>
           )}
         </div>
         {entry.prompt ? (
-          <p className="text-xs text-slate-500 mt-0.5 line-clamp-2 leading-relaxed">{entry.prompt}</p>
+          <p className="text-xs text-th-lo mt-0.5 line-clamp-2 leading-relaxed">{entry.prompt}</p>
         ) : (
-          <p className="text-xs text-slate-700 mt-0.5 italic">无描述</p>
+          <p className="text-xs text-th-xlo mt-0.5 italic">无描述</p>
         )}
       </div>
 
@@ -109,7 +109,7 @@ function AssetItem({ name, entry, type, onDelete }) {
         <button
           onClick={handleDeleteClick}
           className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center
-            text-slate-700 hover:text-rose-400 hover:bg-rose-500/10 transition-all
+            text-th-xlo hover:text-rose-400 hover:bg-rose-500/10 transition-all
             opacity-0 group-hover:opacity-100"
           title="从库中移除"
         >
@@ -158,14 +158,14 @@ export default function LibraryModal({ onClose }) {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in"
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-[#13131A] border border-white/[0.08] rounded-2xl shadow-2xl shadow-black/60 w-full max-w-lg mx-4 flex flex-col animate-slide-up-modal"
+      <div className="bg-th-card border border-th-md rounded-2xl shadow-2xl shadow-black/60 w-full max-w-lg mx-4 flex flex-col theme-transition animate-slide-up-modal"
            style={{ maxHeight: '80vh' }}>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-th-lo shrink-0">
           <div>
-            <h2 className="text-sm font-bold text-slate-100 font-cute">本地素材库</h2>
-            <p className="text-[11px] text-slate-600 mt-0.5">
+            <h2 className="text-sm font-bold text-th-hi font-cute">本地素材库</h2>
+            <p className="text-[11px] text-th-xlo mt-0.5">
               BGM {library.bgm_count} 首 · 音效 {library.sfx_count} 个
             </p>
           </div>
@@ -174,8 +174,8 @@ export default function LibraryModal({ onClose }) {
               onClick={handleSync}
               disabled={syncing}
               title="同步磁盘文件到库"
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-600
-                hover:text-slate-300 hover:bg-white/[0.06] transition-all disabled:opacity-30"
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-th-xlo
+                hover:text-th-md hover:bg-th-surface transition-all disabled:opacity-30"
             >
               <svg className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round"
@@ -184,8 +184,8 @@ export default function LibraryModal({ onClose }) {
             </button>
             <button
               onClick={onClose}
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-600
-                hover:text-slate-300 hover:bg-white/[0.06] transition-all"
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-th-xlo
+                hover:text-th-md hover:bg-th-surface transition-all"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -205,8 +205,8 @@ export default function LibraryModal({ onClose }) {
               onClick={() => setTab(t.id)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium transition-all btn-press
                 ${tab === t.id
-                  ? 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
-                  : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.04] border border-transparent'
+                  ? 'bg-[#E5007F]/10 text-[#FF3BA8] border border-[#E5007F]/20'
+                  : 'text-th-lo hover:text-th-md hover:bg-th-surface border border-transparent'
                 }`}
             >
               {t.id === 'bgm' ? (
@@ -222,7 +222,7 @@ export default function LibraryModal({ onClose }) {
               )}
               {t.label}
               <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-normal
-                ${tab === t.id ? 'bg-violet-500/15 text-violet-400' : 'bg-white/[0.06] text-slate-600'}`}>
+                ${tab === t.id ? 'bg-[#E5007F]/15 text-[#FF3BA8]' : 'bg-white/[0.06] text-th-xlo'}`}>
                 {t.count}
               </span>
             </button>
@@ -233,7 +233,7 @@ export default function LibraryModal({ onClose }) {
         <div className="flex-1 overflow-y-auto px-6 py-3 space-y-2 min-h-0">
           {loading ? (
             <div className="flex justify-center py-12">
-              <span className="w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
+              <span className="w-6 h-6 border-2 border-[#E5007F] border-t-transparent rounded-full animate-spin" />
             </div>
           ) : entries.length === 0 ? (
             <EmptyState type={tab} />
@@ -251,8 +251,8 @@ export default function LibraryModal({ onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-white/[0.06] shrink-0">
-          <p className="text-[11px] text-slate-600 text-center">
+        <div className="px-6 py-3 border-t border-th-lo shrink-0">
+          <p className="text-[11px] text-th-xlo text-center">
             新生成的素材会自动入库 · 下次生成时 AI 会优先复用库中的素材
           </p>
         </div>

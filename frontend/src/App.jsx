@@ -18,8 +18,8 @@ const STYLES = [
     emoji:  '🎙️',
     title:  '儿童广播剧',
     desc:   '拟声词丰富、互动感强，适合8-11岁小朋友收听',
-    color:  'border-violet-500/20 bg-violet-500/[0.04]',
-    active: 'border-violet-500/50 bg-violet-500/10 ring-1 ring-violet-500/30',
+    color:  'border-[#E5007F]/20 bg-[#E5007F]/[0.04]',
+    active: 'border-[#E5007F]/50 bg-[#E5007F]/10 ring-1 ring-[#E5007F]/30',
   },
   {
     id:     'blog',
@@ -79,25 +79,25 @@ function InputPage({ onNext }) {
     )
   }
 
-  const inputCls = "w-full bg-[#1A1A28] border border-white/[0.07] text-slate-200 placeholder:text-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-violet-500/50 focus:border-violet-500/40 transition-all"
+  const inputCls = "w-full bg-th-surface border border-th-lo text-th-hi placeholder:text-th-xlo rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#E5007F]/50 focus:border-[#E5007F]/40 transition-all theme-transition"
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-widest mb-2">故事名称</label>
+          <label className="block text-[11px] font-semibold text-th-lo uppercase tracking-widest mb-2">故事名称</label>
           <input className={inputCls} value={storyName} onChange={e => setStoryName(e.target.value)} placeholder="如：三国演义" />
         </div>
         <div>
-          <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-widest mb-2">集数名称</label>
+          <label className="block text-[11px] font-semibold text-th-lo uppercase tracking-widest mb-2">集数名称</label>
           <input className={inputCls} value={episodeName} onChange={e => setEpisodeName(e.target.value)} placeholder="如：第一集：桃园三结义" />
         </div>
       </div>
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-widest">原著文本</label>
-          <span className="text-[11px] text-slate-700">{rawText.length} 字</span>
+          <label className="block text-[11px] font-semibold text-th-lo uppercase tracking-widest">原著文本</label>
+          <span className="text-[11px] text-th-xlo">{rawText.length} 字</span>
         </div>
         <textarea
           className={`${inputCls} h-52 resize-none leading-relaxed`}
@@ -109,7 +109,7 @@ function InputPage({ onNext }) {
 
       {/* 风格选择 */}
       <div>
-        <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-widest mb-3">改写风格</label>
+        <label className="block text-[11px] font-semibold text-th-lo uppercase tracking-widest mb-3">改写风格</label>
         <div className="grid grid-cols-3 gap-2.5">
           {STYLES.map(s => {
             const isSelected = style === s.id
@@ -120,18 +120,18 @@ function InputPage({ onNext }) {
                   type="button"
                   onClick={() => setStyle(s.id)}
                   className={`w-full text-left p-3.5 rounded-xl border transition-all card-hover
-                    ${isSelected ? s.active : `border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.10] opacity-60 hover:opacity-100`}`}
+                    ${isSelected ? s.active : `border-th-lo bg-th-surface hover:bg-th-surface hover:border-th-md opacity-60 hover:opacity-100`}`}
                 >
                   <div className="text-xl mb-2">{s.emoji}</div>
-                  <div className="text-xs font-semibold text-slate-200">{s.title}</div>
-                  <div className="text-[11px] text-slate-500 mt-0.5 leading-tight">{s.desc}</div>
+                  <div className="text-xs font-semibold text-th-hi">{s.title}</div>
+                  <div className="text-[11px] text-th-lo mt-0.5 leading-tight">{s.desc}</div>
                 </button>
                 {canEdit && (
                   <button
                     type="button"
                     onClick={e => { e.stopPropagation(); setEditingStyle(s.id) }}
                     title="编辑 Prompt"
-                    className="absolute top-2 right-2 w-6 h-6 rounded-lg flex items-center justify-center bg-white/10 hover:bg-white/20 text-slate-400 hover:text-white transition-all"
+                    className="absolute top-2 right-2 w-6 h-6 rounded-lg flex items-center justify-center bg-white/10 hover:bg-white/20 text-th-md hover:text-white transition-all"
                   >
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
@@ -146,11 +146,11 @@ function InputPage({ onNext }) {
         {style === 'custom' && (
           <div className="mt-3">
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-widest">自定义改写指令</label>
-              <span className="text-[11px] text-slate-700">{customPrompt.length} 字</span>
+              <label className="block text-[11px] font-semibold text-th-lo uppercase tracking-widest">自定义改写指令</label>
+              <span className="text-[11px] text-th-xlo">{customPrompt.length} 字</span>
             </div>
             <textarea
-              className="w-full bg-[#1A1A28] border border-amber-500/20 text-slate-200 placeholder:text-slate-700 rounded-xl px-3.5 py-3 h-32 resize-none text-sm leading-relaxed focus:outline-none focus:ring-1 focus:ring-amber-500/40 focus:border-amber-500/30 transition-all"
+              className="w-full bg-th-surface border border-amber-500/20 text-th-hi placeholder:text-th-xlo rounded-xl px-3.5 py-3 h-32 resize-none text-sm leading-relaxed focus:outline-none focus:ring-1 focus:ring-amber-500/40 focus:border-amber-500/30 transition-all theme-transition"
               value={customPrompt}
               onChange={e => setCustomPrompt(e.target.value)}
               placeholder={`例如：\n你是一位粤语有声书播音员，用地道粤语口语改写原著，保留方言语气词（"咁啱""呢""㗎"等），旁白生动，对话简短有力。`}
@@ -172,7 +172,7 @@ function InputPage({ onNext }) {
       <button
         onClick={handleSubmit}
         disabled={!rawText.trim()}
-        className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 disabled:from-white/[0.04] disabled:to-white/[0.04] disabled:text-slate-700 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-violet-500/20 disabled:shadow-none btn-press font-cute text-base"
+        className="w-full bg-gradient-to-r from-[#E5007F] to-[#C4006B] hover:from-[#FF2E9F] hover:to-[#E5007F] disabled:from-th-surface disabled:to-th-surface disabled:text-th-xlo text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-[#E5007F]/20 disabled:shadow-none btn-press font-cute text-base"
       >
         开始改写剧本 — {selectedStyle?.title}
       </button>
@@ -197,25 +197,25 @@ function ReviewPage({ data, onNext, onBack }) {
       <div>
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="text-sm font-semibold text-slate-200">改写后的剧本</h3>
-            <p className="text-[11px] text-slate-600 mt-0.5">{ttsCount} 条台词 · {bgmCount} 首 BGM · {sfxCount} 个音效 · 可直接点击台词修改</p>
+            <h3 className="text-sm font-semibold text-th-hi">改写后的剧本</h3>
+            <p className="text-[11px] text-th-lo mt-0.5">{ttsCount} 条台词 · {bgmCount} 首 BGM · {sfxCount} 个音效 · 可直接点击台词修改</p>
           </div>
         </div>
-        <div className="border border-white/[0.07] rounded-xl p-3 bg-[#1A1A28]">
+        <div className="border border-th-lo rounded-xl p-3 bg-th-surface theme-transition">
           <ScriptViewer script={script} editable onChange={setScript} />
         </div>
       </div>
 
       <div>
-        <h3 className="text-[11px] font-semibold text-slate-600 uppercase tracking-widest mb-3">
-          识别到的角色 <span className="text-slate-700 font-normal normal-case">共 {characters.length} 个</span>
+        <h3 className="text-[11px] font-semibold text-th-lo uppercase tracking-widest mb-3">
+          识别到的角色 <span className="text-th-xlo font-normal normal-case">共 {characters.length} 个</span>
         </h3>
         <div className="flex flex-wrap gap-2">
           {characters.map(c => (
             <span key={c.name}
-              className="px-3 py-1 rounded-full text-xs border border-white/[0.08] bg-white/[0.04] text-slate-400">
+              className="px-3 py-1 rounded-full text-xs border border-th-md bg-th-surface text-th-md theme-transition">
               {c.name}
-              <span className="text-slate-600 ml-1">{c.lines_count}条</span>
+              <span className="text-th-lo ml-1">{c.lines_count}条</span>
             </span>
           ))}
         </div>
@@ -223,11 +223,11 @@ function ReviewPage({ data, onNext, onBack }) {
 
       <div className="flex gap-3 pt-1">
         <button onClick={onBack}
-          className="flex-1 border border-white/[0.08] text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] font-medium py-2.5 rounded-xl transition-colors">
+          className="flex-1 border border-th-md text-th-md hover:text-th-hi hover:bg-th-surface font-medium py-2.5 rounded-xl transition-colors">
           ← 重新改写
         </button>
         <button onClick={() => onNext({ ...data, script })}
-          className="flex-2 flex-grow bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-semibold py-2.5 rounded-xl transition-all shadow-lg shadow-violet-500/20 btn-press">
+          className="flex-2 flex-grow bg-gradient-to-r from-[#E5007F] to-[#C4006B] hover:from-[#FF2E9F] hover:to-[#E5007F] text-white font-semibold py-2.5 rounded-xl transition-all shadow-lg shadow-[#E5007F]/20 btn-press">
           确认，配置音色 →
         </button>
       </div>
@@ -330,16 +330,16 @@ function VoicePage({ data, onNext, onBack }) {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-sm font-semibold text-slate-200 mb-1">配置角色音色</h3>
-        <p className="text-xs text-slate-500">
+        <h3 className="text-sm font-semibold text-th-hi mb-1">配置角色音色</h3>
+        <p className="text-xs text-th-lo">
           AI 已根据音色描述自动匹配，可点击「更改」调整，音色 ID 由音色库统一管理。
         </p>
       </div>
 
       {assigning && (
         <div className="flex items-center gap-3 py-12 justify-center">
-          <div className="w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm text-slate-400">AI 正在匹配音色…</span>
+          <div className="w-5 h-5 border-2 border-[#E5007F] border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm text-th-md">AI 正在匹配音色…</span>
         </div>
       )}
 
@@ -370,13 +370,13 @@ function VoicePage({ data, onNext, onBack }) {
 
       <div className="flex gap-3 pt-1">
         <button onClick={onBack}
-          className="flex-1 border border-white/[0.08] text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] font-medium py-2.5 rounded-xl transition-colors">
+          className="flex-1 border border-th-md text-th-md hover:text-th-hi hover:bg-th-surface font-medium py-2.5 rounded-xl transition-colors">
           ← 返回
         </button>
         <button
           onClick={() => onNext({ ...data, voiceMap: buildVoiceIdMap() })}
           disabled={assigning || missing.length > 0}
-          className="flex-2 flex-grow bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 disabled:from-white/[0.04] disabled:to-white/[0.04] disabled:text-slate-700 text-white font-semibold py-2.5 rounded-xl transition-all shadow-lg shadow-violet-500/20 disabled:shadow-none btn-press">
+          className="flex-2 flex-grow bg-gradient-to-r from-[#E5007F] to-[#C4006B] hover:from-[#FF2E9F] hover:to-[#E5007F] disabled:from-th-surface disabled:to-th-surface disabled:text-th-xlo text-white font-semibold py-2.5 rounded-xl transition-all shadow-lg shadow-[#E5007F]/20 disabled:shadow-none btn-press">
           {assigning ? 'AI 匹配中…' : '下一步：生成 BGM/音效 →'}
         </button>
       </div>
@@ -405,17 +405,17 @@ function VoicePage({ data, onNext, onBack }) {
 
 const STATUS_LABEL = { idle: '待生成', generating: '生成中', done: '已生成', error: '失败' }
 const STATUS_COLOR = {
-  idle:       'bg-white/[0.04] text-slate-600 border-white/[0.07]',
-  generating: 'bg-violet-500/10 text-violet-400 border-violet-500/20 animate-pulse',
+  idle:       'bg-th-surface text-th-lo border-th-lo',
+  generating: 'bg-[#E5007F]/10 text-[#FF3BA8] border-[#E5007F]/20 animate-pulse',
   done:       'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
   error:      'bg-rose-500/10 text-rose-400 border-rose-500/20',
 }
 
 function MediaCard({ name, item, onGenerate, onPromptChange }) {
   return (
-    <div className="border border-white/[0.07] rounded-xl p-3.5 bg-[#1A1A28] space-y-2.5 card-hover hover:border-white/[0.11]">
+    <div className="border border-th-lo rounded-xl p-3.5 bg-th-surface space-y-2.5 card-hover hover:border-th-hi theme-transition">
       <div className="flex items-center gap-2">
-        <span className="font-semibold text-slate-200 text-sm flex-1 truncate">{name}</span>
+        <span className="font-semibold text-th-hi text-sm flex-1 truncate">{name}</span>
         {item.isLibraryReuse && (
           <span className="text-[11px] px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20 shrink-0 font-medium flex items-center gap-1">
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
@@ -432,15 +432,15 @@ function MediaCard({ name, item, onGenerate, onPromptChange }) {
           disabled={item.status === 'generating'}
           className="shrink-0 text-[11px] px-2.5 py-1 rounded-lg border transition-colors
             disabled:opacity-30 disabled:cursor-not-allowed
-            border-white/[0.08] hover:border-violet-500/30 hover:text-violet-400 text-slate-500"
+            border-th-md hover:border-[#E5007F]/30 hover:text-[#FF3BA8] text-th-lo"
         >
           {item.status === 'done' ? '重新生成' : item.status === 'generating' ? '生成中…' : '生成'}
         </button>
       </div>
 
       <textarea
-        className="w-full text-[11px] border border-white/[0.05] rounded-lg px-3 py-2 h-16 resize-none
-          bg-[#0D0D15] text-slate-500 placeholder:text-slate-700 focus:outline-none focus:ring-1 focus:ring-violet-500/30 leading-relaxed"
+        className="w-full text-[11px] border border-th-lo rounded-lg px-3 py-2 h-16 resize-none
+          bg-th-deep text-th-lo placeholder:text-th-xlo focus:outline-none focus:ring-1 focus:ring-[#E5007F]/30 leading-relaxed theme-transition"
         value={item.prompt}
         onChange={e => onPromptChange(name, e.target.value)}
         placeholder="英文提示词（可编辑后再生成）…"
@@ -595,19 +595,19 @@ function MediaPage({ data, onNext, onBack }) {
     <div className="space-y-5">
       {loading ? (
         <div className="flex items-center gap-3 py-12 justify-center">
-          <div className="w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm text-slate-500">正在生成提示词并查询素材库…</span>
+          <div className="w-5 h-5 border-2 border-[#E5007F] border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm text-th-lo">正在生成提示词并查询素材库…</span>
         </div>
       ) : error ? (
         <div className="space-y-3">
           <p className="text-sm text-rose-400 bg-rose-500/10 border border-rose-500/20 px-4 py-3 rounded-xl">{error}</p>
           <button onClick={onBack}
-            className="border border-white/[0.08] text-slate-400 text-sm px-4 py-2 rounded-xl hover:bg-white/[0.04] transition-colors">
+            className="border border-th-md text-th-md text-sm px-4 py-2 rounded-xl hover:bg-th-surface transition-colors">
             ← 返回
           </button>
         </div>
       ) : !hasItems ? (
-        <div className="text-center py-10 text-slate-600 text-sm">
+        <div className="text-center py-10 text-th-lo text-sm">
           本集剧本中没有 BGM 和音效，可直接进入下一步
         </div>
       ) : (
@@ -615,8 +615,8 @@ function MediaPage({ data, onNext, onBack }) {
           {bgm_list.length > 0 && (
             <div className="space-y-2.5">
               <div className="flex items-center gap-2.5">
-                <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest">BGM
-                  <span className="text-slate-700 font-normal normal-case ml-1.5">{bgm_list.length} 首</span>
+                <h3 className="text-[11px] font-semibold text-th-lo uppercase tracking-widest">BGM
+                  <span className="text-th-xlo font-normal normal-case ml-1.5">{bgm_list.length} 首</span>
                 </h3>
                 {Object.values(bgmItems).some(i => i.status === 'generating') && (
                   <span className="text-[11px] text-amber-500 animate-pulse">
@@ -634,8 +634,8 @@ function MediaPage({ data, onNext, onBack }) {
 
           {sfx_list.length > 0 && (
             <div className="space-y-2.5">
-              <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest">音效
-                <span className="text-slate-700 font-normal normal-case ml-1.5">{sfx_list.length} 个</span>
+              <h3 className="text-[11px] font-semibold text-th-lo uppercase tracking-widest">音效
+                <span className="text-th-xlo font-normal normal-case ml-1.5">{sfx_list.length} 个</span>
               </h3>
               {sfx_list.map(n => (
                 <MediaCard key={n} name={n} item={sfxItems[n] || { prompt: '', status: 'idle', previewUrl: null }}
@@ -653,7 +653,7 @@ function MediaPage({ data, onNext, onBack }) {
                 </p>
               )}
               <button onClick={generateAll}
-                className="w-full border border-dashed border-violet-500/30 text-violet-400 hover:text-violet-300 hover:bg-violet-500/[0.05] font-semibold py-2.5 rounded-xl transition-all text-sm btn-press glow-pulse">
+                className="w-full border border-dashed border-[#E5007F]/30 text-[#FF3BA8] hover:text-[#FF70BF] hover:bg-[#E5007F]/[0.05] font-semibold py-2.5 rounded-xl transition-all text-sm btn-press glow-pulse">
                 ⚡ 一键生成全部
               </button>
             </div>
@@ -669,7 +669,7 @@ function MediaPage({ data, onNext, onBack }) {
 
       <div className="flex gap-3 pt-1">
         <button onClick={onBack}
-          className="flex-1 border border-white/[0.08] text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] font-medium py-2.5 rounded-xl transition-colors">
+          className="flex-1 border border-th-md text-th-md hover:text-th-hi hover:bg-th-surface font-medium py-2.5 rounded-xl transition-colors">
           ← 返回
         </button>
         <button
@@ -678,8 +678,8 @@ function MediaPage({ data, onNext, onBack }) {
           title={!allDone ? '请等待所有 BGM 和音效生成完毕后再继续' : ''}
           className={`flex-2 flex-grow font-semibold py-2.5 rounded-xl transition-all text-sm
             ${!allDone
-              ? 'bg-white/[0.04] text-slate-700 cursor-not-allowed border border-white/[0.06]'
-              : 'bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-lg shadow-violet-500/20'}`}
+              ? 'bg-th-surface text-th-xlo cursor-not-allowed border border-th-lo'
+              : 'bg-gradient-to-r from-[#E5007F] to-[#C4006B] hover:from-[#FF2E9F] hover:to-[#E5007F] text-white shadow-lg shadow-[#E5007F]/20'}`}
         >
           {anyGenerating ? '生成中，请稍候…' : '下一步：生成音频剧'}
         </button>
@@ -753,10 +753,10 @@ function ProductionPage({ data, onBack }) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white/[0.03] border border-white/[0.07] rounded-xl px-4 py-3 flex items-center gap-3">
+      <div className="bg-th-surface border border-th-lo rounded-xl px-4 py-3 flex items-center gap-3 theme-transition">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-slate-200 truncate">{storyName} · {episodeName}</p>
-          <p className="text-[11px] text-slate-600 mt-0.5">
+          <p className="text-sm font-semibold text-th-hi truncate">{storyName} · {episodeName}</p>
+          <p className="text-[11px] text-th-lo mt-0.5">
             {script.filter(i => i.type === 'tts').length} 条台词 ·
             {script.filter(i => i.type === 'sfx').length} 个音效 ·
             {script.filter(i => i.type === 'bgm' && i.action === 'start').length} 首 BGM
@@ -766,13 +766,13 @@ function ProductionPage({ data, onBack }) {
 
       {!started ? (
         <div className="space-y-3">
-          <p className="text-slate-500 text-sm text-center py-2">点击下方按钮开始自动生成，整个过程约需 5–15 分钟</p>
+          <p className="text-th-lo text-sm text-center py-2">点击下方按钮开始自动生成，整个过程约需 5–15 分钟</p>
           <button onClick={start}
-            className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-semibold py-3.5 rounded-xl transition-all text-base shadow-xl shadow-violet-500/25 btn-press font-cute">
+            className="w-full bg-gradient-to-r from-[#E5007F] to-[#C4006B] hover:from-[#FF2E9F] hover:to-[#E5007F] text-white font-semibold py-3.5 rounded-xl transition-all text-base shadow-xl shadow-[#E5007F]/25 btn-press font-cute">
             开始自动生成音频剧
           </button>
           <button onClick={onBack}
-            className="w-full border border-white/[0.07] text-slate-500 text-sm py-2 rounded-xl hover:bg-white/[0.03] transition-colors">
+            className="w-full border border-th-lo text-th-lo text-sm py-2 rounded-xl hover:bg-th-surface transition-colors">
             ← 返回修改 BGM/音效
           </button>
         </div>
@@ -782,7 +782,7 @@ function ProductionPage({ data, onBack }) {
 
           {(isDone || hasFailed) && (
             <button onClick={restart}
-              className="w-full flex items-center justify-center gap-2 border border-white/[0.08] text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] text-sm font-medium py-2.5 rounded-xl transition-colors">
+              className="w-full flex items-center justify-center gap-2 border border-th-md text-th-md hover:text-th-hi hover:bg-th-surface text-sm font-medium py-2.5 rounded-xl transition-colors">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
               </svg>
@@ -792,7 +792,7 @@ function ProductionPage({ data, onBack }) {
 
           {!isDone && !hasFailed && (
             <button onClick={onBack}
-              className="w-full border border-white/[0.05] text-slate-700 text-xs py-2 rounded-xl hover:bg-white/[0.03] transition-colors">
+              className="w-full border border-th-lo text-th-xlo text-xs py-2 rounded-xl hover:bg-th-surface transition-colors">
               ← 返回修改（后台任务继续运行）
             </button>
           )}
@@ -812,36 +812,81 @@ export default function App() {
   const [settingsOpen,  setSettingsOpen]  = useState(false)
   const [libraryOpen,   setLibraryOpen]   = useState(false)
 
+  // ── 主题切换 ──────────────────────────────────────────────
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('folotoy-theme')
+    if (saved) return saved === 'dark'
+    return true   // 默认深色
+  })
+
+  useEffect(() => {
+    const html = document.documentElement
+    if (isDark) {
+      html.classList.add('dark')
+    } else {
+      html.classList.remove('dark')
+    }
+    localStorage.setItem('folotoy-theme', isDark ? 'dark' : 'light')
+  }, [isDark])
+
+  const toggleTheme = () => setIsDark(v => !v)
+  // ──────────────────────────────────────────────────────────
+
   const goTo = (s, extra = {}) => {
     setStepData(prev => ({ ...prev, ...extra }))
     setStep(s)
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0D12]">
+    <div className="min-h-screen bg-th-page theme-transition">
       <div className="max-w-[720px] mx-auto px-5 py-8">
         {/* Header */}
-        <header className="flex items-center justify-between mb-10">
+        <header className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shadow-lg shadow-violet-500/25 shrink-0">
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z" />
-              </svg>
+            {/* FoloToy 官方 Logo —— 白色圆角药丸 */}
+            <div className="h-9 bg-white rounded-2xl px-3 flex items-center shadow-lg shrink-0"
+                 style={{ boxShadow: '0 4px 20px rgba(229,0,127,0.22)' }}>
+              <img src="/folotoy-logo.png" alt="FoloToy" className="h-5 w-auto" />
             </div>
             <div>
-              <h1 className="text-base font-bold tracking-tight leading-tight gradient-text font-cute">音频剧制作台</h1>
-              <p className="text-slate-600 text-[11px] mt-0.5">将古典小说自动转化为儿童音频剧</p>
+              <h1 className="text-sm font-bold tracking-tight leading-tight gradient-text font-cute">故事工坊</h1>
+              <p className="text-th-lo text-[11px] mt-0.5">欢迎来到 FoloToy 的故事世界 ✨</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
+
+            {/* ── 主题切换按钮 ── */}
+            <button
+              onClick={toggleTheme}
+              title={isDark ? '切换到浅色模式' : '切换到深色模式'}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-th-lo hover:text-th-md border border-transparent hover:border-th-lo hover:bg-th-surface transition-all relative overflow-hidden"
+            >
+              {/* 太阳（浅色模式图标） */}
+              <svg
+                className={`w-4 h-4 absolute transition-all duration-300 ${isDark ? 'opacity-0 scale-50 rotate-90' : 'opacity-100 scale-100 rotate-0 animate-sun-spin'}`}
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round"
+                  d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+              </svg>
+              {/* 月亮（深色模式图标） */}
+              <svg
+                className={`w-4 h-4 absolute transition-all duration-300 ${isDark ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 -rotate-90'}`}
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round"
+                  d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+              </svg>
+            </button>
+
             <button onClick={() => setLibraryOpen(true)} title="素材库"
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-300 hover:bg-white/[0.06] border border-transparent hover:border-white/[0.08] transition-all">
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-th-lo hover:text-th-md hover:bg-th-surface border border-transparent hover:border-th-lo transition-all">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 0 0-1.883 2.542l.857 6a2.25 2.25 0 0 0 2.227 1.932H19.05a2.25 2.25 0 0 0 2.227-1.932l.857-6a2.25 2.25 0 0 0-1.883-2.542m-16.5 0V6A2.25 2.25 0 0 1 6 3.75h3.879a1.5 1.5 0 0 1 1.06.44l2.122 2.12a1.5 1.5 0 0 0 1.06.44H18A2.25 2.25 0 0 1 20.25 9v.776" />
               </svg>
             </button>
             <button onClick={() => setSettingsOpen(true)} title="API 设置"
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-300 hover:bg-white/[0.06] border border-transparent hover:border-white/[0.08] transition-all">
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-th-lo hover:text-th-md hover:bg-th-surface border border-transparent hover:border-th-lo transition-all">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -852,7 +897,53 @@ export default function App() {
 
         <StepIndicator current={step} />
 
-        <div className="bg-[#13131A] rounded-2xl border border-white/[0.06] p-6 shadow-2xl shadow-black/30 animate-fade-in-up">
+        {/* ── FoloToy 英雄区：仅第 1 步展示 ── */}
+        {step === 1 && (
+          <div className="relative rounded-2xl overflow-hidden mb-5 border border-white/[0.08] shadow-2xl shadow-black/50 animate-fade-in"
+               style={{ height: '180px' }}>
+            {/* 暖色渐变兜底（图片未加载时依然好看） */}
+            <div className="absolute inset-0"
+                 style={{ background: 'linear-gradient(135deg, #1a0e2e 0%, #2d1a0e 40%, #1a1505 100%)' }} />
+            {/* 背景图 */}
+            <img
+              src="/folotoy-hero.jpg"
+              alt="FoloToy 故事世界"
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ objectPosition: 'center 35%' }}
+              onError={e => { e.currentTarget.style.display = 'none' }}
+            />
+            {/* 多层渐变遮罩：左侧深，右侧透明；底部深 */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0D0D12]/88 via-[#0D0D12]/50 to-[#0D0D12]/10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D12]/75 via-transparent to-transparent" />
+
+            {/* 右侧装饰光晕 */}
+            <div className="absolute -bottom-8 -right-8 w-56 h-56 rounded-full pointer-events-none"
+                 style={{ background: 'radial-gradient(circle, rgba(251,191,36,0.12) 0%, transparent 70%)' }} />
+            <div className="absolute top-4 right-16 w-24 h-24 rounded-full pointer-events-none"
+                 style={{ background: 'radial-gradient(circle, rgba(167,139,250,0.10) 0%, transparent 70%)' }} />
+
+            {/* 文字层 */}
+            <div className="absolute inset-0 flex flex-col justify-end p-5">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-amber-300
+                  bg-amber-500/15 border border-amber-500/25 px-2.5 py-0.5 rounded-full tracking-wide">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                  FoloToy 出品
+                </span>
+              </div>
+              <h2 className="text-[22px] font-bold text-white font-cute leading-snug"
+                  style={{ textShadow: '0 2px 16px rgba(0,0,0,0.6)' }}>
+                把任何故事，变成孩子的声音世界
+              </h2>
+              <p className="text-[11px] mt-1.5 leading-relaxed"
+                 style={{ color: 'rgba(255,255,255,0.38)' }}>
+                粘贴原著文本 → AI 改写剧本 → 自动合成角色配音 + BGM + 音效
+              </p>
+            </div>
+          </div>
+        )}
+
+        <div className="bg-th-card rounded-2xl border border-th-lo p-6 shadow-2xl shadow-black/20 animate-fade-in-up theme-transition">
           {step === 1 && (
             <InputPage onNext={d => goTo(2, d)} />
           )}
