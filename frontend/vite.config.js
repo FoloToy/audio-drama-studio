@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:5001',
         changeOrigin: true,
         // 禁止代理层压缩响应，避免 SSE 流式输出被 gzip buffer 卡住
         headers: { 'Accept-Encoding': 'identity' },

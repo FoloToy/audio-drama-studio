@@ -2,6 +2,48 @@
 
 AI 编码助手参考文档。描述当前架构、关键实现细节和注意事项。
 
+> **本仓库现包含两套前端 + 一套后端：**
+> - **Agent 平台（当前主入口，推荐）**：多项目 / 多 Agent / 带审核门禁的 Web 平台，对齐 PRD。入口 `frontend/src/main.jsx → agent/AgentApp.jsx`。
+> - **Studio（旧，保留）**：单会话 5 步向导，`frontend/src/App.jsx`。旧的 `/api/rewrite-script-stream` 等端点仍在。
+>
+> 设计与需求文档：[`docs/01_PRD.md`](docs/01_PRD.md) · [`docs/02_Frontend_UI_Interaction.md`](docs/02_Frontend_UI_Interaction.md) · [`docs/03_Agent_Architecture_API.md`](docs/03_Agent_Architecture_API.md) · [`docs/04_UI.png`](docs/04_UI.png)（主工作台设计稿）· [`docs/05_Upgrade_Plan.md`](docs/05_Upgrade_Plan.md)。
+
+---
+
+## Agent 平台架构（新，当前主线）
+
+**端口**：后端默认 **5001**（macOS 5000 常被 AirPlay 占用；可用 `PORT` 覆盖），前端 5173，Vite 代理 `/api → 5001`。
+**依赖**：Python 3.14 需装 `audioop-lts`（pydub 依赖，已在 venv 中）。
+
+**后端模块（backend/，均为新增，复用 `services/` 全部音频能力）**
+| 文件 | 职责 |
+|---|---|
+| `db.py` | SQLite（`agent_platform.db`）+ 15 张表 schema + 种子（音色/风格模板/安全规则）|
+| `store.py` | 仓储层：项目/分集/剧本块/角色/声音/绑定/风险/音频/导出/任务/风格/规则/素材 CRUD |
+| `orchestrator.py` | AgentTask 队列：worker 线程池 + SSE 推送 + task_type→agent 注册表 + 重试 |
+| `agents.py` | 10 个 Agent（parse_source/generate_outline/generate_script/safety_review/identify_characters/recommend_voices/generate_audio/remix_episode/export_project）。**无 LLM Key 时回退 stub，流程仍可跑通** |
+| `routes_agent.py` | Flask Blueprint（`/api` 前缀）：projects/source/agent-tasks/outline/scripts/safety/characters/voices/audio/exports + `/admin/*`（声音/风格/安全规则/任务）+ `/materials` + `/providers` + `/images` + `/publish-records` |
+| `providers.py` | **多供应商注册表（D-2）**：llm/tts/music/sfx/image 五能力 × 多供应商；全局默认存 app_settings，项目可覆盖（projects.<cap>_provider 列），resolve() 决策 |
+| `llm_router.py` | LLM 路由：deepseek / openai 兼容（OPENAI_BASE_URL 可接任意兼容服务）/ anthropic |
+| `tts_router.py` | TTS 路由：音色 = provider + voice_id（voices.provider 列），同一剧可混用豆包/MiniMax/ElevenLabs |
+| `image_service.py` | **图片生成（D-3）**：OpenAI 兼容 + 火山方舟 Seedream（共用 /images/generations 协议）；角色头像/项目封面提示词模板 |
+| `services/minimax_tts.py` `elevenlabs_tts.py` | 新增 TTS 适配器 |
+| `main.py` | 接线：`init_db()` → `register_all()` → `start_workers()` → 注册 blueprint |
+
+**Agent 新增（12 个）**：+`generate_avatar`（角色头像）、`generate_cover`（项目封面）、`publish_device`（**发布到设备内容库 D-1**：DEVICE_LIBRARY_API_URL + Bearer Key，multipart 上传成片+元数据，含 AIGC 标识；publish_records 表留痕）。
+
+**产品定义**：以 [`docs/06_Product_Definition_V2.md`](docs/06_Product_Definition_V2.md) 为准（"儿童音频内容生产线"定位；D-1/D-2/D-3 已决策）。
+
+**前端（frontend/src/agent/）**：`api.js`（含 `runTask` SSE 运行器）、`AgentApp.jsx`（登录 + 侧栏 + 项目中心 + 单屏四区工作台，对齐 `04_UI.png`）、`Admin.jsx`（声音库/模板/安全规则/任务中心/素材库/系统设置 + mock 登录）。
+
+**配置**：所有 API Key 在 `backend/.env`（占位待填）或平台「系统设置」页填写（热更新，写回 `.env`）。
+
+**启动**：
+```bash
+cd backend && python3 -m venv venv && ./venv/bin/pip install -r requirements.txt audioop-lts && PORT=5001 ./venv/bin/python -u main.py
+cd frontend && npm install && npm run dev   # 访问 http://localhost:5173/
+```
+
 ---
 
 ## 项目概述

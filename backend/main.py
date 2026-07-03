@@ -41,24 +41,40 @@ STYLE_PROMPT_FILES = {
     "blog":       "script_rewrite_blog.txt",
 }
 
-# 可通过设置页面修改的配置项
+# 可通过设置页面修改的配置项（多供应商，D-2/D-3/D-1）
 SETTINGS_KEYS = [
-    "ANTHROPIC_API_KEY",
-    "CLAUDE_API_BASE",
-    "CLAUDE_MODEL",
-    "DEEPSEEK_API_KEY",
-    "DEEPSEEK_MODEL",
-    "MINIMAX_API_KEY",
-    "MINIMAX_GROUP_ID",
+    # LLM
+    "DEEPSEEK_API_KEY", "DEEPSEEK_MODEL",
+    "OPENAI_API_KEY", "OPENAI_BASE_URL", "OPENAI_MODEL",
+    "ANTHROPIC_API_KEY", "CLAUDE_API_BASE", "CLAUDE_MODEL",
+    # TTS
     "DOUBAO_API_KEY",
+    # 音乐 / 音效（MiniMax、ElevenLabs 与 TTS 共用 Key）
+    "MINIMAX_API_KEY", "MINIMAX_GROUP_ID",
     "ELEVENLABS_API_KEY",
     "SUNO_API_URL",
+    # 图片
+    "OPENAI_IMAGE_MODEL",
+    "ARK_API_KEY", "ARK_IMAGE_MODEL",
+    # 设备内容库发布
+    "DEVICE_LIBRARY_API_URL", "DEVICE_LIBRARY_API_KEY",
 ]
 
 app = Flask(__name__)
 CORS(app)
 
-# 全局任务进度队列：{task_id: queue.Queue}
+# ── Agent 平台（新）：SQLite 持久化 + AgentTask 编排 + 全部平台路由 ──
+import db as agent_db
+import orchestrator as agent_orch
+import agents as agent_impls
+from routes_agent import bp as agent_bp
+
+agent_db.init_db()
+agent_impls.register_all()
+agent_orch.start_workers(3)
+app.register_blueprint(agent_bp, url_prefix="/api")
+
+# 全局任务进度队列：{task_id: queue.Queue}（旧 Studio 音频流程沿用）
 _task_queues: dict[str, queue.Queue] = {}
 
 
@@ -739,5 +755,7 @@ def _run_generation(
 if __name__ == "__main__":
     # 启动时将磁盘上已有的 BGM/音效文件同步进素材库
     asset_library.sync_from_disk()
+    # 端口可用 PORT 覆盖；默认 5001（macOS 5000 常被 AirPlay 占用）
+    port = int(os.environ.get("PORT", "5001"))
     # SSE 需要 threaded=True；use_reloader=False 避免 reloader 子进程丢失队列状态
-    app.run(host="0.0.0.0", port=5000, debug=True, threaded=True, use_reloader=False)
+    app.run(host="0.0.0.0", port=port, debug=True, threaded=True, use_reloader=False)

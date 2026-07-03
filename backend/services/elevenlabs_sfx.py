@@ -22,16 +22,22 @@ def generate_sfx(
     prompt_en:        str,
     duration_seconds: float = 3.0,
     prompt_influence: float = 0.3,
+    provider:         Optional[str] = None,
 ) -> Optional[str]:
     """
-    用 ElevenLabs Sound Effects API 生成音效，返回本地 MP3 路径；失败返回 None。
+    生成音效，返回本地 MP3 路径；失败返回 None。
+    provider: 'elevenlabs' | 'minimax'，未指定默认 ElevenLabs。
     """
     safe_name = _sanitize(sfx_name)
     out_path  = os.path.join(SFX_DIR, f"{safe_name}.mp3")
 
     if os.path.exists(out_path) and os.path.getsize(out_path) > 1000:
-        print(f"[SFX/ElevenLabs] 已存在，跳过: {safe_name}.mp3", flush=True)
+        print(f"[SFX] 已存在，跳过: {safe_name}.mp3", flush=True)
         return out_path
+
+    if provider == "minimax":
+        from services.minimax_sfx import generate_sfx as _mm
+        return _mm(sfx_name, prompt_en)
 
     if not ELEVENLABS_API_KEY:
         print(f"[SFX/ElevenLabs] 未配置 ELEVENLABS_API_KEY，跳过: {sfx_name}", flush=True)
@@ -75,8 +81,9 @@ def generate_sfx(
 def generate_all_sfx(
     sfx_prompts: dict[str, str],
     progress_callback=None,
+    provider: Optional[str] = None,
 ) -> dict[str, str]:
-    """批量生成音效，返回 {名称: 文件路径}。"""
+    """批量生成音效，返回 {名称: 文件路径}。provider 见 generate_sfx。"""
     result = {}
     total  = len(sfx_prompts)
 
@@ -85,7 +92,7 @@ def generate_all_sfx(
         if progress_callback:
             progress_callback(name, "generating", i, total)
 
-        path = generate_sfx(name, prompt)
+        path = generate_sfx(name, prompt, provider=provider)
         if path:
             result[name] = path
             if progress_callback:

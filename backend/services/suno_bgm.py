@@ -20,9 +20,11 @@ def generate_bgm(
     bgm_name: str,
     prompt_en: str,
     max_wait_seconds: int = 300,
+    provider: Optional[str] = None,
 ) -> Optional[str]:
     """
-    生成 BGM：优先使用 MiniMax（MINIMAX_API_KEY 非空），否则走 Suno。
+    生成 BGM。provider: 'minimax' | 'suno'；未指定时按旧逻辑
+    （MINIMAX_API_KEY 非空 → MiniMax，否则 Suno）。
 
     Args:
         bgm_name:         BGM名称（用于文件命名）
@@ -33,7 +35,8 @@ def generate_bgm(
         生成的BGM文件路径，失败返回None
     """
     import config as _cfg
-    if (_cfg.MINIMAX_API_KEY or "").strip():
+    use_minimax = (provider == "minimax") if provider else bool((_cfg.MINIMAX_API_KEY or "").strip())
+    if use_minimax:
         from services.minimax_bgm import generate_bgm as _mm_generate
         return _mm_generate(bgm_name, prompt_en, max_wait_seconds=min(max_wait_seconds, 300))
 
@@ -148,14 +151,16 @@ def _download_bgm(audio_url: str, out_path: str, bgm_name: str) -> Optional[str]
 def generate_all_bgm(
     bgm_prompts: dict[str, str],
     progress_callback=None,
+    provider: Optional[str] = None,
 ) -> dict[str, str]:
     """
     批量生成所有BGM（串行，因Suno API有并发限制）。
-    
+
     Args:
         bgm_prompts: {BGM名: 英文提示词}
         progress_callback: fn(name, status, index, total)
-    
+        provider: 'minimax' | 'suno'，未指定按自动路由
+
     Returns:
         {BGM名: 文件路径}
     """
@@ -167,7 +172,7 @@ def generate_all_bgm(
         if progress_callback:
             progress_callback(name, "generating", i, total)
 
-        path = generate_bgm(name, prompt)
+        path = generate_bgm(name, prompt, provider=provider)
         if path:
             result[name] = path
             if progress_callback:

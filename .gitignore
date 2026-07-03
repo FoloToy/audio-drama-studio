@@ -22,3 +22,9 @@ Thumbs.db
 
 # Generated audio output (large files)
 backend/output/
+
+# Agent 平台运行产物
+backend/venv/
+backend/agent_platform.db
+backend/agent_platform.db-*
+backend/assets/images/

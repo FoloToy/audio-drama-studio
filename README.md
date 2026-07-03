@@ -6,6 +6,22 @@
 
 ---
 
+## 产品文档（PRD & 架构）
+
+面向「儿童音频短剧创作 Agent 平台」的完整产品需求与技术文档位于 [`docs/`](docs/README.md)：
+
+| 文档 | 说明 |
+|---|---|
+| [`docs/01_PRD.md`](docs/01_PRD.md) | 产品需求文档：定位、MVP 范围、核心流程、数据结构、验收标准 |
+| [`docs/02_Frontend_UI_Interaction.md`](docs/02_Frontend_UI_Interaction.md) | 前端页面与交互说明（13 个 MVP 页面、状态流转、编辑器交互） |
+| [`docs/03_Agent_Architecture_API.md`](docs/03_Agent_Architecture_API.md) | Agent 编排、10 个 Agent、核心 API、数据模型、任务队列 |
+| [`docs/04_UI.png`](docs/04_UI.png) | UI 设计参考图 |
+| [`docs/06_Product_Definition_V2.md`](docs/06_Product_Definition_V2.md) | **产品定义 V2（最新）**：从"工具"重定位为"儿童音频内容生产线"，含系列/版本/质量/合规/成本模型 |
+
+> 当前代码库是该 PRD 的早期「Studio」实现（单项目 5 步线性向导），正逐步向文档描述的多项目、多 Agent 平台演进。
+
+---
+
 ## 快速开始
 
 ### 1. 启动后端
