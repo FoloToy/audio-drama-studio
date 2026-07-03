@@ -93,59 +93,82 @@ function PlayBtn({ url, color = C.ok }) {
 const inp = { width: '100%', padding: '9px 12px', borderRadius: 9, border: `1px solid ${C.borderMd}`, fontSize: 13.5, outline: 'none', boxSizing: 'border-box', background: '#fff', color: C.text }
 
 // ═══════════════ 侧栏 ═══════════════
-function Sidebar({ recent, onNew, onNav, onOpen, active, user, onLogout, onHelp }) {
+const LOGOUT_ICON = <><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></>
+function Sidebar({ recent, onNew, onNav, onOpen, active, user, onLogout, onHelp, collapsed, onToggle }) {
   const nav = [['grid', '项目中心', 'center'], ['box', '素材库', 'materials'], ['sound', '声音库', 'voices'], ['folder', '我的资源', 'resources'], ['tpl', '模板中心', 'styles'], ['task', '任务中心', 'tasks']]
   const foot = [['safety', '安全规则', 'safety'], ['gear', '系统设置', 'settings'], ['help', '帮助中心', 'HELP']]
+  const navRow = (ic, n, v, small) => {
+    const on = active === v
+    return (
+      <div key={n} onClick={() => v === 'HELP' ? onHelp() : onNav(v)} title={collapsed ? n : undefined}
+        style={{ padding: collapsed ? '10px 0' : (small ? '8px 12px' : '9px 12px'), borderRadius: 9,
+          fontSize: small ? 12.5 : 13.5, cursor: 'pointer', display: 'flex', alignItems: 'center',
+          justifyContent: collapsed ? 'center' : 'flex-start', gap: collapsed ? 0 : (small ? 8 : 10),
+          color: on ? C.primary : C.textMd, background: on ? C.primarySoft : 'transparent',
+          fontWeight: on ? 700 : 500, marginBottom: 2 }}
+        onMouseEnter={e => { if (!on) e.currentTarget.style.background = C.page }}
+        onMouseLeave={e => { if (!on) e.currentTarget.style.background = 'transparent' }}>
+        <Ico d={ICONS[ic]} size={small ? 15 : 17} />{!collapsed && <span>{n}</span>}
+      </div>
+    )
+  }
   return (
-    <div style={{ width: 226, background: '#fff', borderRight: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', flexShrink: 0, height: '100vh' }}>
-      <div style={{ padding: '18px 18px 12px', display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ width: 34, height: 34, borderRadius: 9, background: `linear-gradient(135deg,${C.primary},#8E7BFF)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ width: collapsed ? 64 : 226, background: '#fff', borderRight: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', flexShrink: 0, height: '100vh', transition: 'width .2s ease' }}>
+      {/* 品牌 + 折叠开关 */}
+      <div style={{ padding: collapsed ? '16px 0 8px' : '18px 14px 10px', display: 'flex', alignItems: 'center', gap: 10, justifyContent: collapsed ? 'center' : 'flex-start' }}>
+        <div style={{ width: 34, height: 34, borderRadius: 9, background: `linear-gradient(135deg,${C.primary},#8E7BFF)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><rect x="3" y="9" width="2.4" height="6" rx="1.2" /><rect x="7.5" y="5" width="2.4" height="14" rx="1.2" /><rect x="12" y="8" width="2.4" height="8" rx="1.2" /><rect x="16.5" y="3" width="2.4" height="18" rx="1.2" /><rect x="21" y="10" width="2.4" height="4" rx="1.2" /></svg>
         </div>
-        <div>
-          <div style={{ fontWeight: 800, fontSize: 14.5, color: C.text, lineHeight: 1.15 }}>音频短剧创作</div>
+        {!collapsed && <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 800, fontSize: 14.5, color: C.text, lineHeight: 1.15, whiteSpace: 'nowrap' }}>音频短剧创作</div>
           <div style={{ fontSize: 11, color: C.textLo2, display: 'flex', gap: 4, alignItems: 'center' }}>Agent <span style={{ background: C.primarySoft, color: C.primary, padding: '0 5px', borderRadius: 4, fontSize: 10 }}>Beta</span></div>
-        </div>
+        </div>}
+        {!collapsed && <div onClick={onToggle} title="收起侧栏" style={{ cursor: 'pointer', color: C.textLo2, padding: 4, display: 'flex', flexShrink: 0 }}>
+          <Ico d={<><path d="M15 18l-6-6 6-6" /></>} size={16} /></div>}
       </div>
-      <div style={{ padding: '4px 14px 8px' }}><Btn onClick={onNew} style={{ width: '100%', padding: '10px' }}>＋ 新建项目</Btn></div>
-      <div style={{ padding: '8px 12px' }}>
-        {nav.map(([ic, n, v]) => {
-          const on = active === v
-          return <div key={n} onClick={() => onNav(v)}
-            style={{ padding: '9px 12px', borderRadius: 9, fontSize: 13.5, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10,
-              color: on ? C.primary : C.textMd, background: on ? C.primarySoft : 'transparent', fontWeight: on ? 700 : 500, marginBottom: 2 }}
-            onMouseEnter={e => { if (!on) e.currentTarget.style.background = C.page }} onMouseLeave={e => { if (!on) e.currentTarget.style.background = 'transparent' }}>
-            <Ico d={ICONS[ic]} /> {n}</div>
-        })}
+      {collapsed && <div onClick={onToggle} title="展开侧栏" style={{ cursor: 'pointer', color: C.textLo2, padding: '2px 0 8px', display: 'flex', justifyContent: 'center' }}>
+        <Ico d={<><path d="M9 18l6-6-6-6" /></>} size={16} /></div>}
+
+      {/* 新建项目 */}
+      <div style={{ padding: collapsed ? '0 12px 6px' : '0 14px 8px' }}>
+        <Btn onClick={onNew} title="新建项目" style={{ width: '100%', padding: collapsed ? '9px 0' : '10px' }}>{collapsed ? '＋' : '＋ 新建项目'}</Btn>
       </div>
-      <div style={{ padding: '10px 18px 6px', fontSize: 12, color: C.textLo2, fontWeight: 600 }}>最近项目</div>
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 12px' }}>
-        {recent.slice(0, 6).map(p => (
-          <div key={p.project_id} onClick={() => onOpen(p.project_id)} style={{ padding: '8px', borderRadius: 9, cursor: 'pointer', marginBottom: 3, display: 'flex', gap: 10, alignItems: 'center' }}
+
+      {/* 一级导航 */}
+      <div style={{ padding: collapsed ? '6px 10px' : '8px 12px' }}>
+        {nav.map(([ic, n, v]) => navRow(ic, n, v, false))}
+      </div>
+
+      {/* 最近项目（折叠时隐藏文字，仅缩略图） */}
+      {!collapsed && <div style={{ padding: '10px 18px 6px', fontSize: 12, color: C.textLo2, fontWeight: 600 }}>最近项目</div>}
+      <div style={{ flex: 1, overflowY: 'auto', padding: collapsed ? '4px 12px' : '0 12px' }}>
+        {recent.slice(0, collapsed ? 4 : 6).map(p => (
+          <div key={p.project_id} onClick={() => onOpen(p.project_id)} title={p.title}
+            style={{ padding: collapsed ? '4px 0' : '8px', borderRadius: 9, cursor: 'pointer', marginBottom: 3, display: 'flex', gap: 10, alignItems: 'center', justifyContent: collapsed ? 'center' : 'flex-start' }}
             onMouseEnter={e => e.currentTarget.style.background = C.page} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-            <div style={{ width: 38, height: 38, borderRadius: 8, background: gradFor(p.project_id), flexShrink: 0 }} />
-            <div style={{ minWidth: 0 }}>
+            <div style={{ width: collapsed ? 34 : 38, height: collapsed ? 34 : 38, borderRadius: 8, background: gradFor(p.project_id), flexShrink: 0 }} />
+            {!collapsed && <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: 12.5, color: C.text, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.title}</div>
               <div style={{ fontSize: 10.5, color: C.textLo2 }}>更新于 {(p.updated_at || '').slice(0, 10)}</div>
-            </div>
+            </div>}
           </div>))}
-        {recent.length > 0 && <div onClick={() => onNav('center')} style={{ textAlign: 'center', color: C.primary, fontSize: 12.5, padding: '8px', cursor: 'pointer', fontWeight: 600 }}>查看全部</div>}
+        {!collapsed && recent.length > 0 && <div onClick={() => onNav('center')} style={{ textAlign: 'center', color: C.primary, fontSize: 12.5, padding: '8px', cursor: 'pointer', fontWeight: 600 }}>查看全部</div>}
       </div>
-      <div style={{ padding: '10px 12px', borderTop: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {foot.map(([ic, n, v]) => {
-          const on = active === v
-          return <div key={n} onClick={() => v === 'HELP' ? onHelp() : onNav(v)} style={{ padding: '8px 12px', borderRadius: 9, fontSize: 12.5, color: on ? C.primary : C.textMd, background: on ? C.primarySoft : 'transparent', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontWeight: on ? 700 : 500 }}><Ico d={ICONS[ic]} size={15} />{n}</div>
-        })}
+
+      {/* 底部导航 */}
+      <div style={{ padding: collapsed ? '8px 10px' : '10px 12px', borderTop: `1px solid ${C.border}`, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {foot.map(([ic, n, v]) => navRow(ic, n, v, true))}
       </div>
-      {/* 当前用户 + 退出登录 */}
-      <div style={{ padding: '12px 14px', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ width: 32, height: 32, borderRadius: 16, background: 'linear-gradient(135deg,#F0A0C0,#A088E8)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{(user?.name || 'U')[0].toUpperCase()}</div>
-        <div style={{ flex: 1, minWidth: 0 }}>
+
+      {/* 当前用户 + 退出 */}
+      <div style={{ padding: collapsed ? '10px 0' : '12px 14px', borderTop: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', gap: 10, flexDirection: collapsed ? 'column' : 'row', justifyContent: collapsed ? 'center' : 'flex-start' }}>
+        <div title={`${user?.name || ''} ${user?.email || ''}`} style={{ width: 32, height: 32, borderRadius: 16, background: 'linear-gradient(135deg,#F0A0C0,#A088E8)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{(user?.name || 'U')[0].toUpperCase()}</div>
+        {!collapsed && <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 12.5, fontWeight: 700, color: C.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.name || '未登录'}{user?.role === 'admin' && <span style={{ fontSize: 10, color: C.primary, marginLeft: 4 }}>管理员</span>}</div>
           <div style={{ fontSize: 10.5, color: C.textLo2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email || ''}</div>
-        </div>
+        </div>}
         <div onClick={onLogout} title="退出登录" style={{ cursor: 'pointer', color: C.textMd, padding: 4, display: 'flex' }}>
-          <Ico d={<><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></>} size={16} />
+          <Ico d={LOGOUT_ICON} size={16} />
         </div>
       </div>
     </div>
@@ -264,7 +287,7 @@ function NewProjectModal({ user, onClose, onCreated }) {
 }
 
 // ═══════════════ 工作台（单屏四区仪表盘） ═══════════════
-function Workbench({ projectId, onHome, onNav, user, onLogout }) {
+function Workbench({ projectId, onHome }) {
   const [project, setProject] = useState(null)
   const [step, setStep] = useState(0)
   const [busy, setBusy] = useState(null)
@@ -273,11 +296,6 @@ function Workbench({ projectId, onHome, onNav, user, onLogout }) {
   const [blocks, setBlocks] = useState([])
   const [toast, setToast] = useState('')
   const [produce, setProduce] = useState(false)
-  const [showBell, setShowBell] = useState(false)
-  const [showUser, setShowUser] = useState(false)
-  const [notif, setNotif] = useState([])
-  const loadNotif = useCallback(() => { api.adminTasks().then(d => setNotif((d.tasks || []).slice(0, 8))).catch(() => {}) }, [])
-  useEffect(() => { loadNotif() }, [loadNotif, busy])
 
   const reload = useCallback(async () => { const p = await api.getProject(projectId); setProject(p); return p }, [projectId])
   useEffect(() => { reload() }, [reload])
@@ -316,47 +334,7 @@ function Workbench({ projectId, onHome, onNav, user, onLogout }) {
         <Btn size="sm" variant="ghost" onClick={() => track('生成故事封面…')(async setP => { await runTask({ task_type: 'generate_cover', project_id: project.project_id }, setP); flash('✓ 封面已生成') })} style={{ padding: '7px 14px' }} title="用图片引擎生成故事集封面">🎨 生成封面</Btn>
         <Btn size="sm" variant="ghost" onClick={async () => { await api.updateProject(project.project_id, { title: project.title }); await reload(); flash('✓ 已保存草稿') }} style={{ padding: '7px 14px' }}>保存草稿</Btn>
         <Btn size="sm" onClick={() => setProduce(true)} style={{ padding: '7px 16px' }}>生成音频</Btn>
-        {/* 通知：Agent 任务动态 */}
-        <span onClick={() => { setShowBell(v => !v); setShowUser(false); loadNotif() }} style={{ position: 'relative', color: C.textMd, cursor: 'pointer', display: 'flex' }}>
-          <Ico d={ICONS.bell} size={19} />
-          {notif.some(t => ['pending', 'running'].includes(t.status)) && <span style={{ position: 'absolute', top: -1, right: -1, width: 7, height: 7, borderRadius: 4, background: C.danger }} />}
-        </span>
-        {/* 用户菜单 */}
-        <div onClick={() => { setShowUser(v => !v); setShowBell(false) }} style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }}>
-          <div style={{ width: 30, height: 30, borderRadius: 15, background: 'linear-gradient(135deg,#F0A0C0,#A088E8)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13 }}>{(user?.name || 'U')[0].toUpperCase()}</div>
-          <span style={{ fontSize: 13.5, color: C.text, fontWeight: 600 }}>{user?.name || '创作者'}</span>
-          <span style={{ color: C.textLo2, fontSize: 11 }}>▾</span>
-        </div>
       </div>
-      {/* 通知下拉 */}
-      {showBell && (
-        <div style={{ position: 'absolute', top: 56, right: 130, width: 330, background: '#fff', border: `1px solid ${C.border}`, borderRadius: 12, boxShadow: '0 8px 30px rgba(20,20,40,.12)', zIndex: 40, padding: 8 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: C.text, padding: '6px 10px' }}>任务通知</div>
-          {notif.length === 0 ? <div style={{ padding: '10px', fontSize: 12.5, color: C.textLo2 }}>暂无任务</div> :
-            notif.map(t => {
-              const ST = { pending: ['等待', C.textLo2], running: ['进行中', C.blue], succeeded: ['✓ 成功', C.ok], failed: ['✕ 失败', C.danger], cancelled: ['已取消', C.textLo2] }
-              const [sl, sc] = ST[t.status] || ST.pending
-              const TL = { parse_source: '素材解析', generate_outline: '故事拆集', generate_script: '剧本生成', safety_review: '安全审核', identify_characters: '角色识别', recommend_voices: '声音匹配', generate_audio: '音频生成', remix_episode: '重新混音', export_project: '导出', generate_avatar: '角色头像', generate_cover: '封面生成', publish_device: '发布设备库' }
-              return (
-                <div key={t.task_id} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, padding: '7px 10px', borderTop: `1px solid ${C.border}`, fontSize: 12.5 }}>
-                  <span style={{ color: C.text }}>{TL[t.task_type] || t.task_type}<span style={{ color: C.textLo2, marginLeft: 6, fontSize: 11 }}>{(t.message || '').slice(0, 16)}</span></span>
-                  <span style={{ color: sc, whiteSpace: 'nowrap' }}>{sl}</span>
-                </div>)
-            })}
-          <div onClick={() => { setShowBell(false); onNav && onNav('tasks') }} style={{ textAlign: 'center', color: C.primary, fontSize: 12.5, padding: '8px', cursor: 'pointer', fontWeight: 600, borderTop: `1px solid ${C.border}` }}>查看任务中心 →</div>
-        </div>
-      )}
-      {/* 用户下拉 */}
-      {showUser && (
-        <div style={{ position: 'absolute', top: 56, right: 20, width: 200, background: '#fff', border: `1px solid ${C.border}`, borderRadius: 12, boxShadow: '0 8px 30px rgba(20,20,40,.12)', zIndex: 40, padding: 6 }}>
-          <div style={{ padding: '8px 12px', borderBottom: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>{user?.name}</div>
-            <div style={{ fontSize: 11, color: C.textLo2 }}>{user?.email}</div>
-          </div>
-          <div onClick={() => { setShowUser(false); onNav && onNav('settings') }} style={{ padding: '9px 12px', fontSize: 13, color: C.textMd, cursor: 'pointer', borderRadius: 8 }}>⚙️ 系统设置</div>
-          <div onClick={onLogout} style={{ padding: '9px 12px', fontSize: 13, color: C.danger, cursor: 'pointer', borderRadius: 8 }}>↪ 退出登录</div>
-        </div>
-      )}
 
       {/* Stepper */}
       <div style={{ display: 'flex', alignItems: 'center', padding: '14px 30px', background: '#fff', borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
@@ -794,6 +772,8 @@ export default function AgentApp() {
   const [pid, setPid] = useState(null)
   const [showNew, setShowNew] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
+  const [collapsed, setCollapsed] = useState(() => localStorage.getItem('ads_sidebar_collapsed') === '1')
+  const toggleSidebar = () => setCollapsed(v => { localStorage.setItem('ads_sidebar_collapsed', v ? '0' : '1'); return !v })
   const [recent, setRecent] = useState([])
   const [refresh, setRefresh] = useState(0)
   const loadRecent = useCallback(() => { api.listProjects().then(d => setRecent(d.projects || [])) }, [])
@@ -808,9 +788,10 @@ export default function AgentApp() {
   return (
     <div style={{ display: 'flex', height: '100vh', background: C.page, color: C.text, fontFamily: '-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif' }}>
       <Sidebar recent={recent} onNew={() => setShowNew(true)} onNav={nav} onOpen={open} active={sidebarActive}
-        user={user} onLogout={logout} onHelp={() => setShowHelp(true)} />
+        user={user} onLogout={logout} onHelp={() => setShowHelp(true)}
+        collapsed={collapsed} onToggle={toggleSidebar} />
       {view === 'center' ? <ProjectCenter onOpen={open} onNew={() => setShowNew(true)} refresh={refresh} />
-        : view === 'workbench' ? <Workbench key={pid} projectId={pid} onHome={() => nav('center')} onNav={nav} user={user} onLogout={logout} />
+        : view === 'workbench' ? <Workbench key={pid} projectId={pid} onHome={() => nav('center')} />
           : ADMIN_VIEWS.includes(view) ? <AdminPage page={view} />
             : <ProjectCenter onOpen={open} onNew={() => setShowNew(true)} refresh={refresh} />}
       {showNew && <NewProjectModal user={user} onClose={() => setShowNew(false)} onCreated={id => { setShowNew(false); setRefresh(r => r + 1); open(id) }} />}

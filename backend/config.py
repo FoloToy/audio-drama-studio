@@ -44,6 +44,25 @@ SFX_DIR            = os.environ.get("SFX_DIR", "./assets/sfx")
 BGM_DIR            = os.environ.get("BGM_DIR", "./assets/bgm")
 IMAGES_DIR         = os.environ.get("IMAGES_DIR", "./assets/images")
 
+# ── 可在线配置的键（存 DB app_settings；.env 仅作首次启动的播种默认值）──────
+CONFIG_KEYS = [
+    # LLM
+    "DEEPSEEK_API_KEY", "DEEPSEEK_MODEL",
+    "OPENAI_API_KEY", "OPENAI_BASE_URL", "OPENAI_MODEL",
+    "ANTHROPIC_API_KEY", "CLAUDE_API_BASE", "CLAUDE_MODEL",
+    # TTS
+    "DOUBAO_API_KEY",
+    # 音乐 / 音效
+    "MINIMAX_API_KEY", "MINIMAX_GROUP_ID",
+    "ELEVENLABS_API_KEY",
+    "SUNO_API_URL",
+    # 图片
+    "OPENAI_IMAGE_MODEL",
+    "ARK_API_KEY", "ARK_IMAGE_MODEL",
+    # 设备内容库发布
+    "DEVICE_LIBRARY_API_URL", "DEVICE_LIBRARY_API_KEY",
+]
+
 BGM_VOLUME         = -20
 SFX_VOLUME         = -25
 BGM_FADE_OUT       = 2000

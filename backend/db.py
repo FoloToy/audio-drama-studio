@@ -280,6 +280,49 @@ def init_db():
     conn.commit()
     _migrate(conn)
     _seed()
+    apply_settings_overlay()
+
+
+# ─────────────────────── 配置存储（DB 为准，.env 仅首次播种）───────────────────
+
+def set_config(key: str, value: str):
+    """写入 DB 并热更新 config 模块 + 环境变量。"""
+    import config as _cfg
+    conn = get_conn()
+    with _write_lock:
+        conn.execute("INSERT OR REPLACE INTO app_settings(key,value) VALUES(?,?)",
+                     (f"cfg_{key}", value))
+        conn.commit()
+    setattr(_cfg, key, value)
+    import os as _os
+    _os.environ[key] = value or ""
+
+
+def apply_settings_overlay():
+    """
+    启动时执行：
+    - DB 已有该键 → 用 DB 值覆盖 config（DB 是配置的唯一事实来源）
+    - DB 没有该键 → 把 .env/默认值播种进 DB（仅首次）
+    """
+    import os as _os
+    import config as _cfg
+    conn = get_conn()
+    seeded, loaded = 0, 0
+    for k in _cfg.CONFIG_KEYS:
+        r = conn.execute("SELECT value FROM app_settings WHERE key=?", (f"cfg_{k}",)).fetchone()
+        if r is None:
+            v = getattr(_cfg, k, "") or ""
+            with _write_lock:
+                conn.execute("INSERT OR REPLACE INTO app_settings(key,value) VALUES(?,?)",
+                             (f"cfg_{k}", v))
+                conn.commit()
+            seeded += 1
+        else:
+            v = r["value"] or ""
+            setattr(_cfg, k, v)
+            _os.environ[k] = v
+            loaded += 1
+    print(f"[db] 配置 overlay：DB 加载 {loaded} 项，播种 {seeded} 项", flush=True)
 
 
 def _seed():
